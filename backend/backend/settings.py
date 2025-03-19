@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +30,24 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+# JWT
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Duración del token de acceso, es decir si el usuario hace una peticion cada 30 minutos mientras la app esta abierta, siempre tendra acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Duración del token de refresco, le permite al usuario tener acceso tras cerrar la app
+    'ROTATE_REFRESH_TOKENS': True,                   # Rotar el token de refresco cada vez que se use
+    'BLACKLIST_AFTER_ROTATION': True,                # Invalidar tokens antiguos después de rotarlos
+    'ALGORITHM': 'HS256',                            # Algoritmo de encriptación
+    'SIGNING_KEY': 'qVevjkFfsTERoZ79YL6AdfeUrwaLWBoK4azM4J0fiLE',                 # Clave secreta (puedes usar la de Django)
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'users',
     'tasks',
 ]

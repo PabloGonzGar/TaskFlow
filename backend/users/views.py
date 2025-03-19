@@ -8,7 +8,11 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 import json
 
-# Vista para el registro de usuarios
+
+
+'''-------------------------------------------------------LOGICA DE NEGOCIO DE USUARIOS --------------------------------------------------- '''
+
+# funcion para el registro de usuarios
 @csrf_exempt
 def user_register(request):
     if request.method != 'POST':
@@ -62,7 +66,7 @@ def user_register(request):
     
 
 
-#Funcion de login
+#Funcion de login-------------------------------------------------------------------------------------------------------------
 
 @csrf_exempt
 def user_login(request):
@@ -117,11 +121,18 @@ def user_login(request):
 
 #Funcion de logout
 
+def user_logout(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'El único método permitido es POST'}, status=405)
+    
+    
+    
+
 #Mostrar las estadísticas del usuario
 
 
 
-''' --------------------------------------------------- LOGICA DE NEGOCIO DE ADMINISTRADORES --------------------------------------------------- '''
+''' --------------------------------------------------- LOGICA DE NEGOCIO DE ADMINISTRADORES ----------------------------------------------------------------- '''
 
 
 ''' DEJAR PARA LO ULTIMO '''

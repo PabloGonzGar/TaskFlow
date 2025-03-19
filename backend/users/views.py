@@ -1,4 +1,5 @@
 from users.models import User
+import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
@@ -6,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
-import json
 
 
 
@@ -16,7 +16,7 @@ import json
 @csrf_exempt
 def user_register(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'El único método permitido es POST'}, status=405)
+        return JsonResponse({'error': 'El unico método permitido es POST'}, status=405)
 
     # Obtener datos del formulario
     data = json.loads(request.body)
@@ -71,7 +71,7 @@ def user_register(request):
 @csrf_exempt
 def user_login(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'El único método permitido es POST'}, status=405)
+        return JsonResponse({'error': 'El unico método permitido es POST'}, status=405)
 
         #Obtener datos del formulario
 
@@ -121,10 +121,28 @@ def user_login(request):
 
 #Funcion de logout
 
+
+@csrf_exempt
 def user_logout(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'El único método permitido es POST'}, status=405)
+        return JsonResponse({'error': 'El unico método permitido es POST'}, status=405)
     
+    data = json.loads(request.body)
+    refresh_token = data.get('refresh_token')
+
+    if not refresh_token:
+        return JsonResponse({'error': 'Falta el token de refresco'}, status=400)
+
+    try:
+        token =  RefreshToken(refresh_token)
+        token.blacklist
+    except Exception as e:
+        return JsonResponse({'error': f'Error al revocar el token de refresco: {str(e)}'}, status=500)
+
+    return JsonResponse({'message': 'Token de refresco revocado'}, status=200)
+
+
+
     
     
 

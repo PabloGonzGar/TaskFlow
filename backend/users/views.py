@@ -56,6 +56,11 @@ def user_register(request):
         #Devuelve  algo en json
         return JsonResponse({
             'message': 'Usuario creado con éxito',
+            'user':{
+                'id': user.id,
+                'email': email,
+                'name': name
+            },
             'access_token': access_token,
             'refresh_token': refresh_token
         }, status=201)
@@ -74,10 +79,13 @@ def user_login(request):
         return JsonResponse({'error': 'El unico método permitido es POST'}, status=405)
 
         #Obtener datos del formulario
+    try:
+        data = json.loads(request.body)
+        email = data.get('email','').strip()
+        password = data.get('password')
+    except Exception as e:  
+        return JsonResponse({'error': f'Error al obtener los datos del formulario: {str(e)}'}, status=500)
 
-    data = json.loads(request.body)
-    email = data.get('email','').strip()
-    password = data.get('password')
 
     #Comprobar que el email y la password no esten vacios
     if email and password:
@@ -85,12 +93,9 @@ def user_login(request):
         try:
             validate_email(email)
         except ValidationError as e:
-            return JsonResponse({'error': f'Email no valido: {str(e)}'}, status=400)
+            return JsonResponse({'error': f'Email no valido'}, status=400)
         
-        try:
-            validate_password(password)
-        except ValidationError as e:
-            return JsonResponse({'error': f'Password no valida:  {str(e)}'}, status=400)
+        
         
         #Verificar si el usuario existe y la password es correcta
         if User.objects.filter(email=email).exists() and  User.objects.get(email=email).check_password(password):
@@ -106,6 +111,11 @@ def user_login(request):
             #Devolver codigo success 200
             return JsonResponse({
                 'message': 'Se ha iniciado sesion correctamente',
+                'user':{
+                    'id': user.id,
+                    'email': email,
+                    'name': user.name
+                },
                 'access_token': access_token,
                 'refresh_token': refresh_token
             },status=200)
@@ -135,14 +145,42 @@ def user_logout(request):
 
     try:
         token =  RefreshToken(refresh_token)
-        token.blacklist
+        token.blacklist()
     except Exception as e:
         return JsonResponse({'error': f'Error al revocar el token de refresco: {str(e)}'}, status=500)
 
     return JsonResponse({'message': 'Token de refresco revocado'}, status=200)
 
 
+#refresh_token para persister el token de acceso
 
+@csrf_exempt
+def refresh_token(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Metodo no permitido'}, status=405)
+    
+    data = json.loads(request.body)
+    refresh_token = data.get('refresh_token')
+
+    if not refresh_token:
+        return JsonResponse({'error': 'Falta el token de refresco'}, status=400)
+    
+    try:
+        token =  RefreshToken(refresh_token)
+        access_token = str(token.access_token)
+        new_token = RefreshToken.for_user(token.user)
+        new_refresh_token = str(token)
+        token.blacklist()
+
+        return JsonResponse({
+            'message': 'Token de acceso obtenido',
+            'access_token': access_token,
+            'refresh_token': new_refresh_token
+        },status=200)
+
+
+    except Exception as e:
+        return JsonResponse({'error': f'Error al obtener el token de acceso: {str(e)}'}, status=500)
     
     
 

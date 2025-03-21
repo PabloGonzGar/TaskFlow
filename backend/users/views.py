@@ -6,7 +6,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 
 
@@ -152,37 +153,39 @@ def user_logout(request):
     return JsonResponse({'message': 'Token de refresco revocado'}, status=200)
 
 
-#refresh_token para persister el token de acceso
 
-@csrf_exempt
 def refresh_token(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Metodo no permitido'}, status=405)
-    
-    data = json.loads(request.body)
-    refresh_token = data.get('refresh_token')
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-    if not refresh_token:
-        return JsonResponse({'error': 'Falta el token de refresco'}, status=400)
-    
     try:
-        token =  RefreshToken(refresh_token)
-        access_token = str(token.access_token)
-        new_token = RefreshToken.for_user(token.user)
-        new_refresh_token = str(token)
+        data = json.loads(request.body)
+        refresh_token = data.get('refresh_token')
+
+        if not refresh_token:
+            return JsonResponse({'error': 'Falta el token de refresco'}, status=400)
+
+        token = RefreshToken(refresh_token)
+        user_id = token['user_id']
+        user = User.objects.get(id=user_id) 
+
         token.blacklist()
 
+        new_access_token = str(AccessToken.for_user(user))
+        new_refresh_token = str(RefreshToken.for_user(user))
+
         return JsonResponse({
-            'message': 'Token de acceso obtenido',
-            'access_token': access_token,
+            'message': 'Token de acceso actualizado',
+            'access_token': new_access_token,
             'refresh_token': new_refresh_token
-        },status=200)
+        }, status=200)
 
-
+    except TokenError:
+        return JsonResponse({'error': 'Token inválido o expirado'}, status=401)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
     except Exception as e:
-        return JsonResponse({'error': f'Error al obtener el token de acceso: {str(e)}'}, status=500)
-    
-    
+        return JsonResponse({'error': f'Error al refrescar el token: {str(e)}'}, status=500)
 
 #Mostrar las estadísticas del usuario
 

@@ -12,7 +12,7 @@ import { NgIf } from '@angular/common';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
-  public credeentials = {
+  public credentials = {
     email: '',
     name: '',
     password: '',
@@ -25,12 +25,12 @@ export class RegisterComponent {
   register():void{
     this.errorMessage = null
 
-    console.log(this.credeentials.password);
+    console.log(this.credentials.password);
     console.log(this.confirmPassword);
 
-    if(this.confirmPassword===this.credeentials.password){
+    if(this.confirmPassword===this.credentials.password){
 
-      this.authService.register(this.credeentials).subscribe({
+      this.authService.register(this.credentials).subscribe({
         next: () => {
           console.log('exito');
           this.router.navigate(['/dashboard'])

@@ -11,6 +11,11 @@ export class AuthService {
   private apiUrl = 'http://localhost:8000/api' 
   private accessTokenKey = 'access_token' 
   private refreshTokenKey = 'refresh_token' 
+  public currentUser = {
+    id: '',
+    email: '',
+    name: '',
+  }
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken())
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -18,9 +23,12 @@ export class AuthService {
   login(credentials: { email: string, password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/login/`, credentials).pipe(
       tap((response: any) => {
-        if (response && response.accessToken && response.refreshToken) {
-          localStorage.setItem(this.accessTokenKey, response.accessToken)
-          localStorage.setItem(this.refreshTokenKey, response.refreshToken)
+        if (response && response.access_token && response.refresh_token) {
+          localStorage.setItem(this.accessTokenKey, response.access_token)
+          localStorage.setItem(this.refreshTokenKey, response.refresh_token)
+          this.currentUser.id = response.user.id
+          this.currentUser.email = response.user.email
+          this.currentUser.name = response.user.name
           this.isLoggedInSubject.next(true)
         }
       }),
@@ -33,12 +41,15 @@ export class AuthService {
 
 
 
-  register(credeentials: {email:string, name:string,  password:string}): Observable<any> {
-    return this.http.post(`${this.apiUrl}/users/register/`, credeentials).pipe(
+  register(credentials: {email:string, name:string,  password:string}): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/register/`, credentials).pipe(
       tap((response:any) => {
-        if(response && response.accessToken && response.refreshToken){
-          localStorage.setItem(this.accessTokenKey, response.accessToken)
-          localStorage.setItem(this.refreshTokenKey, response.refreshToken)
+        if(response && response.access_token && response.refresh_token){
+          localStorage.setItem(this.accessTokenKey, response.access_token)
+          localStorage.setItem(this.refreshTokenKey, response.refresh_token)
+          this.currentUser.id = response.user.id
+          this.currentUser.email = response.user.email
+          this.currentUser.name = response.user.name
           this.isLoggedInSubject.next(true)
         }
       }),
@@ -82,8 +93,8 @@ export class AuthService {
 
     return this.http.post(`${this.apiUrl}/users/refresh-token`, { refreshToken }).pipe(
       tap((response: any) => {
-        if (response && response.accessToken) {
-          localStorage.setItem(this.accessTokenKey, response.accessToken)
+        if (response && response.access_token) {
+          localStorage.setItem(this.accessTokenKey, response.access_token)
           localStorage.setItem(this.refreshTokenKey, response.refresh_token)
           this.isLoggedInSubject.next(true)
         }

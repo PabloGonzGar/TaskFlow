@@ -23,7 +23,8 @@ export class LoginComponent {
     this.errorMessage = null
     this.authService.login(this.creedentials).subscribe({
       next: () => {
-        console.log('exito');
+        console.log('exito')
+        console.log(this.authService.currentUser);
         this.router.navigate(['/dashboard'])
       },
       error: (error) => {

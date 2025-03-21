@@ -32,6 +32,24 @@ export class AuthService {
   }
 
 
+
+  register(credeentials: {email:string, name:string,  password:string}): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/register/`, credeentials).pipe(
+      tap((response:any) => {
+        if(response && response.accessToken && response.refreshToken){
+          localStorage.setItem(this.accessTokenKey, response.accessToken)
+          localStorage.setItem(this.refreshTokenKey, response.refreshToken)
+          this.isLoggedInSubject.next(true)
+        }
+      }),
+      catchError(error => {
+        console.log('Register failed', error);
+        return throwError(()=>error)
+      })
+    )
+  }
+
+
   logout(): Observable<any> {
     const refreshToken = this.getRefreshToken()
     if (!refreshToken) {

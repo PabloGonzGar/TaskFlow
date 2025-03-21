@@ -15,32 +15,4 @@ export class UserService {
 
   public identifiedUser:any = null
 
-
-  //PETICION DE REGISTRO
-  userRegister(userData:{email:string,name:string,password:string}){
-
-    //agregamos a la url basica el endpoint
-    let url = `${this.baseUrl}register`
-
-    //enviamos la peticion
-    return this.http.post(url,userData,{headers:this.headers}).subscribe(
-      (response: any) => {
-        console.log('registro completadp', response);
-        //si pasa agregamos a nuestro objeto de usuario el dato recibido
-        this.identifiedUser = response.user
-        //y guardamos el token de acceso y refresco a local storage
-        localStorage.setItem('access_token', response.access_token)
-        localStorage.setItem('refresh_token', response.refresh_token)
-      },
-      (error) => {
-        //si no pasa mostramos un mensaje de error
-        console.log('Error en el registro', error);
-      }
-    )
-  }
-
-
-
-
-
 }

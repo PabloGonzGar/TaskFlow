@@ -15,23 +15,27 @@
             <div class="emailUsername flex gap-6 min-w-xl">
                 <div class="flex flex-col">
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" name="email" id="email" placeholder="ejemplo@gmail.com" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
+                    <input type="email" name="email" [(ngModel)]="credeentials.email" id="email" placeholder="ejemplo@gmail.com" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
                 </div>
                 <div class="flex flex-col">
                     <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                    <input type="text" name="username" id="username" placeholder="Username" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
+                    <input type="text" name="username"  [(ngModel)]="credeentials.name" id="username" placeholder="Username" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
                 </div>
             </div>
 
             <div class="password flex flex-col gap-3 min-w-xl">
                 <div class="flex flex-col">
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" name="password" id="password" placeholder="******" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
+                    <input type="password" name="password"  [(ngModel)]="credeentials.password" id="password" placeholder="******" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
                 </div>
                 <div class="flex flex-col">
                     <label for="passwordRepeat" class="block text-sm font-medium text-gray-700"> Repeat Password</label>
-                    <input type="password" name="passwordRepeat" id="passwordRepeat" placeholder="******" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
+                    <input type="password" name="passwordRepeat"  [(ngModel)]="confirmPassword" id="passwordRepeat" placeholder="******" class="px-3 py-2 min-w-xl border-2 rounded-lg focus:outline-none focus:border-primary-100 ">
                 </div>
+            </div>
+
+            <div class="h-2 flex justify-center ">
+                <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
             </div>
 
             <div class="my-4 flex align-middle gap-2">
@@ -39,10 +43,10 @@
                 <p class="text-sm font-regular text-gray-600">Acepto los<span class="text-primary-100">Términos de servicio </span>y la<span class="text-primary-100"> Política de privacidad </span></p>       
             </div>
 
-            <input type="submit" class="text-white bg-primary-100 py-1 rounded-lg hover:bg-blue-700 hover:cursor-pointer hover:shadow-lg" value="Registrarse">
+            <input type="submit" class="text-white bg-primary-100 py-1 rounded-lg hover:bg-blue-700 hover:cursor-pointer hover:shadow-lg" value="Registrarse" (click)="register()">
 
             <div class="my-4 flex align-middle justify-center">
-                <p class="text-md font-regular text-gray-600">¿Ya tienes una cuenta? <a href="" class="text-primary-100 hover:underline">Inicia sesión</a></p>
+                <p class="text-md font-regular text-gray-600">¿Ya tienes una cuenta? <a href="" [routerLink]="['/login']" routerLinkActive="router-link-active"  class="text-primary-100 hover:underline">Inicia sesión</a></p>
             </div>
         </form>
     </div>

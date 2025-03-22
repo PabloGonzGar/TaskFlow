@@ -16,6 +16,8 @@ module.exports = {
       height: {
         'half': '50vh',
         'half-full': '60vh',
+        'sidebar': '20vh',
+        'dash': '90vh',
       },
 
       fontSize:{

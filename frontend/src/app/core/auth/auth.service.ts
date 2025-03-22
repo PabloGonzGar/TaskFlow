@@ -16,6 +16,9 @@ export class AuthService {
     email: '',
     name: '',
   }
+
+
+
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken())
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -29,6 +32,7 @@ export class AuthService {
           this.currentUser.id = response.user.id
           this.currentUser.email = response.user.email
           this.currentUser.name = response.user.name
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
           this.isLoggedInSubject.next(true)
         }
       }),
@@ -47,6 +51,7 @@ export class AuthService {
         if(response && response.access_token && response.refresh_token){
           localStorage.setItem(this.accessTokenKey, response.access_token)
           localStorage.setItem(this.refreshTokenKey, response.refresh_token)
+          localStorage.setItem('currentUser', response.user)
           this.currentUser.id = response.user.id
           this.currentUser.email = response.user.email
           this.currentUser.name = response.user.name
@@ -69,10 +74,10 @@ export class AuthService {
       return throwError(() => new Error('No refresh token available'))
     }
 
-    return this.http.post(`${this.apiUrl}/users/logout`, { refreshToken }).pipe(
+    return this.http.post(`${this.apiUrl}/users/logout/`, { refreshToken }).pipe(
       tap(() => {
         this.clearTokens()
-        this.router.navigate(['/'])
+        this.router.navigate(['/landing'])
       }),
       catchError(error => {
         console.error('Logout failed', error)
@@ -117,6 +122,7 @@ export class AuthService {
   private clearTokens(): void {
     localStorage.removeItem(this.accessTokenKey)
     localStorage.removeItem(this.refreshTokenKey)
+    localStorage.removeItem('currentUser')
     this.isLoggedInSubject.next(false)
   }
 

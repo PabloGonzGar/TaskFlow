@@ -1,6 +1,6 @@
 <div class="flex min-w-screen h-screen">
 
-    <div class="flex flex-col w-3/12 h-screen border-r-2  shadow-lg px-10 py-7">
+    <div class="flex flex-col w-3/12 h-screen border-r-2   px-10 py-7">
         <img src="logo-name.svg" alt="" width="350" class="px-5">
 
         <div class="flex-1 overflow-y-auto mt-10">
@@ -33,28 +33,6 @@
                 </a>
             </div>
 
-            <div class="principal flex flex-col gap-2 mt-10 w-full">
-                <h5 class="text-xl font-medium text-stone-600 px-5">Categorías</h5>
-
-                <a href=""
-                    class="flex gap-3 items-center w-full rounded-md hover:bg-blue-100 hover:cursor-pointer px-5 py-2 hover:text-primary-100"
-                    >
-                    <img src="tareas-icon.svg" alt="" width="30">
-                    <p class="text-xl relative">Tareas</p>
-                </a>
-                <a href=""
-                    class="flex gap-3 items-center w-full rounded-md hover:bg-blue-100 hover:cursor-pointer px-5 py-2 hover:text-primary-100"
-                    >
-                    <img src="stats.svg" alt="" width="30">
-                    <p class="text-xl relative">Estadísticas</p>
-                </a>
-
-                <button class="flex gap-3 items-center w-full rounded-md bg-primary-100 hover:bg-blue-600 hover:cursor-pointer px-5 py-2 hover:text-primary-100">
-                    <span class="text-3xl text-white"> + </span>
-                    <p class="text-xl relative text-white">Nueva categoría</p>
-                </button>
-
-            </div>
         </div>
 
 
@@ -70,15 +48,15 @@
                 <p class="text-xl relative text-stone-600">Perfil</p>
             </a>
             <button
-                class="flex gap-3 items-center w-full rounded-md hover:bg-blue-100 hover:cursor-pointer px-5 py-2 hover:text-primary-100" (click)="logout()">
+                class="flex gap-3 items-center w-full rounded-md hover:bg-red-100 hover:cursor-pointer px-5 py-2 " (click)="logout()">
                 <img src="logout.svg" alt="" width="30">
                 <p class="text-xl relative text-red-500">Cerrar sesión</p>
             </button>
         </div>
     </div>
 
-    <div class="flex-1 overflow-y-auto pt-10">
-        <div class="flex items-center border-b-2 px-10 pb-10 shadow-lg">
+    <div class="flex-1 h-full overflow-y-auto pt-10">
+        <div class="flex items-center h-header border-b-2 px-10 pb-10 shadow-lg ">
             <h1 class="text-3xl font-bold">Contenido principal</h1>
             <div class="flex-1 flex justify-end items-center gap-5">
                 <p class="text-xl font-regular">Bienvenido, {{this.user.name}}!</p>
@@ -88,6 +66,10 @@
                 </div>
             </div>
         </div>
-        <router-outlet></router-outlet>
+        <div class="h-content min-w-full bg-gradient-to-tr from-primary-100 to-primary-200 flex flex-col justify-center items-center gap-10"> 
+
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>
+

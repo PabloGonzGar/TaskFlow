@@ -19,6 +19,12 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) { }
 
+  ngOnInit(): void {
+    if(this.authService.currentUser){
+      this.router.navigate(['/dashboard'])
+    }
+  }
+
   login():void{
     this.errorMessage = null
     this.authService.login(this.creedentials).subscribe({

@@ -18,6 +18,8 @@ module.exports = {
         'half-full': '60vh',
         'sidebar': '20vh',
         'dash': '90vh',
+        'header': '10%', 
+        'content': '90%', 
       },
 
       fontSize:{

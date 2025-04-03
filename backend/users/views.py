@@ -174,7 +174,7 @@ def refresh_token(request):
         new_access_token = str(AccessToken.for_user(user))
         new_refresh_token = str(RefreshToken.for_user(user))
 
-        return JsonResponse({
+        return JsonResponse({   
             'message': 'Token de acceso actualizado',
             'access_token': new_access_token,
             'refresh_token': new_refresh_token

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http'
 import { Router } from '@angular/router'
 import { Observable, BehaviorSubject, throwError } from 'rxjs'
 import { tap, catchError, switchMap } from 'rxjs/operators'
+import { compileNgModule } from '@angular/compiler'
 
 @Injectable({
   providedIn: 'root'
@@ -91,6 +92,8 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
     const refreshToken = this.getRefreshToken()
+    console.log(refreshToken)
+    console.log(this.getAccessToken())
     if (!refreshToken) {
       this.clearTokens()
       return throwError(() => new Error('No refresh token available'))

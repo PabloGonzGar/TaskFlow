@@ -30,21 +30,35 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# JWT
-
+# settings.py
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    ],
 }
 
+
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Duración del token de acceso, es decir si el usuario hace una peticion cada 30 minutos mientras la app esta abierta, siempre tendra acceso
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Duración del token de refresco, le permite al usuario tener acceso tras cerrar la app
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Duración del token de acceso, es decir si el usuario hace una peticion cada 30 minutos mientras la app esta abierta, siempre tendra acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),     # Duración del token de refresco, le permite al usuario tener acceso tras cerrar la app
     'ROTATE_REFRESH_TOKENS': True,                   # Rotar el token de refresco cada vez que se use
     'BLACKLIST_AFTER_ROTATION': True,                # Invalidar tokens antiguos después de rotarlos
     'ALGORITHM': 'HS256',                            # Algoritmo de encriptación
-    'SIGNING_KEY': 'qVevjkFfsTERoZ79YL6AdfeUrwaLWBoK4azM4J0fiLE',                 # Clave secreta (puedes usar la de Django)
+    'SIGNING_KEY': 'qVevjkFfsTERoZ79YL6AdfeUrwaLWBoK4azM4J0fiLE',  
+    
+    
+    
+    'ALGORITHM': 'HS256',
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
 
@@ -78,7 +92,7 @@ MIDDLEWARE = [
 
 # Configuración de CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # Origen de tu frontend Angular
+    "http://localhost:4200", 
 ]
 
 CORS_ALLOW_METHODS = [

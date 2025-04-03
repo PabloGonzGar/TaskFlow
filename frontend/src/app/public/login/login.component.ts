@@ -21,6 +21,10 @@ export class LoginComponent {
 
   ngOnInit(): void {
     if(this.authService.currentUser){
+      this.authService.refreshToken()
+      console.log("despues de refreshToken")
+      console.log(this.authService.getAccessToken())
+      console.log(this.authService.getRefreshToken())
       this.router.navigate(['/dashboard'])
     }
   }

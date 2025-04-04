@@ -3,10 +3,10 @@ from django.http import JsonResponse
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 import json
-import time
 from rest_framework_simplejwt.tokens import AccessToken
 from tasks.models import Task
 from tasks.models import Tag
+from tasks.models import TaskTag
 from users.models import User
 import google.generativeai as genai
 from rest_framework.decorators import api_view, permission_classes
@@ -23,6 +23,8 @@ genai.configure(api_key="AIzaSyCH_CVlqllzqiXjlJcFLHIfwle0TUz_qoc")
 
 
 #  crear una tarea
+@csrf_exempt
+@permission_classes([IsAuthenticated])
 def create_task(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'El unico método permitido es POST'}, status=405)
@@ -53,7 +55,7 @@ def create_task(request):
         
         # Validar que la fecha sea posterior a la actual
         
-        if end_date < datetime.now().strftime('%Y-%m-%d'):
+        if datetime.fromisoformat(end_date) < datetime.now():
             return JsonResponse({'error': 'La fecha debe ser posterior a la actual'}, status=400)
         
         for tag in tags:
@@ -116,6 +118,7 @@ def get_recommendations(request):
         #Sacar datos de la base de datos 
         try:
             tasks = Task.objects.filter(user=user)
+            taskTags = TaskTag.objects.filter(task__in=tasks)
             print('tareas de usuario' + str(tasks))
         except Exception as e:
             return JsonResponse({'error': f'Error al obtener las tareas: {str(e)}'}, status=500)
@@ -124,8 +127,14 @@ def get_recommendations(request):
             Eres un experto de gestion y recomendacion de tareas,
             Para las siguientes tareas: {tasks}, quiero que me ayudes a hacer 
             una recomendacion por relevancia que creas mas importante y me devuelvas 5 tareas como maximo.
-            devuelvemelas estrictamente en formato json y ordenadas por relevancia
-            Si no encuentras ninguna recomendacion, devuelveme una lista vacia.
+            aqui tienes los tags: {taskTags}
+            devuelvemelas estrictamente en el siguiente formato:
+            titulo:dato
+            descripcion:dato
+            categoria:name:color;name:color;...(debes responder con los tags)
+            Cada tarea separalo mediante el caracter -  
+            Si no encuentras ninguna recomendacion, inventate 3 tareas con un titulo y una descripcion y dos categorias cada una y no digas nada mas que las tareas .
+            No digas nada mas que las tareas, pues se complica acceder a los datos despues, ni si quiera fuera del json 
         """
 
 
@@ -147,7 +156,27 @@ def get_recommendations(request):
 
 
 
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def get_tags(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Only GET requests allowed'}, status=405)
+    try:
+        tags = Tag.objects.all()
+        result = []
+        for tag in tags:
+            result.append({
+                'id': tag.id,
+                'name': tag.name,
+                'color': tag.color,
+            })
+
+        print(result)
 
 
+        return JsonResponse(result, status=200, safe=False)
+
+    except Exception as e:
+        return JsonResponse({'error-message': str(e)}, status=500)
 
 # crear recordatorio via email

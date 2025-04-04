@@ -1,9 +1,9 @@
-<div class="flex min-w-screen h-screen">
+<div class="flex min-w-screen min-h-screen h-screen">
 
     <div class="flex flex-col w-3/12 h-screen border-r-2   px-10 py-7">
-        <img src="logo-name.svg" alt="" width="350" class="px-5">
+        <img src="logo-name.svg" alt="" width="350" class="px-5 mt-4">
 
-        <div class="flex-1 overflow-y-auto mt-10">
+        <div class="flex-1 overflow-y-auto mt-20">
             <div class="principal flex flex-col gap-2 w-full">
                 <h5 class="text-xl font-medium text-stone-600 px-5">Principal</h5>
 
@@ -55,9 +55,8 @@
         </div>
     </div>
 
-    <div class="flex-1 h-full overflow-y-auto pt-10">
+    <div class="flex-1 h-full overflow-y-auto pt-10 w-9/10">
         <div class="flex items-center h-header border-b-2 px-10 pb-10 shadow-lg ">
-            <h1 class="text-3xl font-bold">Contenido principal</h1>
             <div class="flex-1 flex justify-end items-center gap-5">
                 <p class="text-xl font-regular">Bienvenido, {{this.user.name}}!</p>
 
@@ -66,9 +65,15 @@
                 </div>
             </div>
         </div>
-        <div class="h-content min-w-full bg-gradient-to-tr from-primary-100 to-primary-200 flex flex-col justify-center items-center gap-10"> 
 
-            <router-outlet></router-outlet>
+
+        <div class="h-content w-full bg-gradient-to-tr from-primary-100 to-primary-200 flex flex-col justify-center items-center">
+            <div class="w-full h-full">
+
+                
+                <router-outlet></router-outlet>
+            </div>
+            
         </div>
     </div>
 </div>

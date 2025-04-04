@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/auth/auth.service';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 
 @Component({
@@ -10,7 +10,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './layout.component.css'
 })
 export class LayoutComponent implements OnInit{
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   public user = {
     id: '',
@@ -27,6 +27,7 @@ export class LayoutComponent implements OnInit{
 
 
   logout(){
-    this.authService.logout()
+    this.authService.logout().subscribe()
+    this.router.navigate(['/landing'])
   }
 }

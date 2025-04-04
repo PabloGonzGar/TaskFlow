@@ -23,7 +23,17 @@ export class TaskService {
     });
   }
 
+
+
   getRecomendedTasks() {
     return this.http.get(this.api_url + 'recommendations/', {headers: this.getHeaders()})
+  }
+
+  getAllTags(){
+    return this.http.get(this.api_url + 'tags/', {headers: this.getHeaders()})
+  }
+
+  createTask(task:any){
+    return this.http.post(this.api_url + 'create/', task, {headers: this.getHeaders()})
   }
 }

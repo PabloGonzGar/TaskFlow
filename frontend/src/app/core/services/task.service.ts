@@ -36,4 +36,8 @@ export class TaskService {
   createTask(task:any){
     return this.http.post(this.api_url + 'create/', task, {headers: this.getHeaders()})
   }
+
+  getTasksByUser(){
+    return this.http.get(this.api_url + 'tasks/', {headers: this.getHeaders()})
+  }
 }

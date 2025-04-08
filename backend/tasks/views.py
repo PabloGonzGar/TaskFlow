@@ -11,6 +11,9 @@ from users.models import User
 import google.generativeai as genai
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from dateutil import parser
+from django.utils.timezone import make_aware, is_naive
+
 """
 conf de la api key de gemini para hacer la inferencia
 """
@@ -45,30 +48,50 @@ def create_task(request):
         if not title or not description or not end_date:
             return JsonResponse({'error': 'Faltan datos obligatorios'}, status=400)
         
-        # Validar el formato de la fecha
-
-        try:
-            end_date = end_date.split('-')
-            end_date = f'{end_date[2]}-{end_date[1]}-{end_date[0]}'
-        except Exception as e:
-            return JsonResponse({'error': f'Formato de fecha incorrecto: {str(e)}'}, status=400)
         
         # Validar que la fecha sea posterior a la actual
+
+
+        date_formatted = parser.parse(end_date)
+
+
+        if is_naive(date_formatted):
+            date_formatted = make_aware(date_formatted)
+
+        date_formatted = date_formatted.strftime('%Y-%m-%d %H:%M:%S')
+
         
-        if datetime.fromisoformat(end_date) < datetime.now():
+        if date_formatted < datetime.now().strftime('%Y-%m-%d %H:%M:%S'):
             return JsonResponse({'error': 'La fecha debe ser posterior a la actual'}, status=400)
         
-        for tag in tags:
-            if not Task.objects.filter(title=tag).exists():
-                tag_name =  tag.name
-                tag_color = tag.color
-                Tag.objects.create(name=tag_name, color=tag_color)
+
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return JsonResponse({'error': 'No autorizado'}, status=401)
+
+        token = auth_header.split(' ')[1]
+        try:
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']
+            user = User.objects.get(id=user_id)
+
+        except Exception as e:
+            return JsonResponse({'error': f'Error al validar el token: {str(e)}'}, status=401)
         
 
         # Crear la tarea 
-
-        task = Task(title=title, description=description, start_date=start_date, end_date=end_date, status='pending', user=request.user.id)
+        task = Task(title=title, description=description, start_date=start_date, end_date=end_date, status='pending', user=user)
         task.save()
+        for tag_id in tags:
+            try:
+                tag = Tag.objects.get(id=tag_id)  
+
+                print(tag)
+                taskTag = TaskTag(task=task, tag=tag)
+                taskTag.save()  
+            except Tag.DoesNotExist:
+                return JsonResponse({'error': f'La etiqueta con ID {tag_id} no existe'}, status=400)
+
 
         # Devolver datos en json
         return JsonResponse({
@@ -79,7 +102,55 @@ def create_task(request):
 
 # listar todas tus tareas
 
+def get_tasks(request):
+    try:
+        if request.method != 'GET':
+            return JsonResponse({'error': 'El unico método permitido es GET'}, status=405)
+        
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return JsonResponse({'error': 'No autorizado'}, status=401)
+        
+        token = auth_header.split(' ')[1]
+        try:
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']
+            user = User.objects.get(id=user_id)
+        except Exception as e:
+            return JsonResponse({'error': f'Error al validar el token: {str(e)}'}, status=401)
+        
+        if not user or user.is_anonymous:
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+        
+        try:
+            tasks = Task.objects.filter(user=user)
+            result = []
+            for task in tasks:
+                tags = TaskTag.objects.filter(task=task)
+                array_tags = []
+                for tag in tags:
+                    tag_name = tag.tag.name
+                    tag_color = tag.tag.color
+                    array_tags.append({
+                        'name': tag_name,
+                        'color': tag_color,
+                    })
+                result.append({
+                    'id': task.id,
+                    'title': task.title,
+                    'description': task.description,
+                    'start_date': task.start_date,
+                    'end_date': task.end_date,
+                    'status': task.status,
+                    'tags': array_tags,
+                })
+                
+            return JsonResponse(result, status=200, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': f'Error al obtener las tareas: {str(e)}'}, status=500)
 
+    except Exception as e:
+        return JsonResponse({'error': f'Error al obtener las tareas: {str(e)}'}, status=500)
 # actualizar una tarea
 
 

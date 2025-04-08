@@ -1,14 +1,22 @@
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/auth/auth.service';
 import { TaskService } from '../../core/services/task.service';
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { CommonModule } from '@angular/common';
+
+registerLocaleData(localeEs)
+
 
 @Component({
   selector: 'app-task',
-  imports: [NgIf, FormsModule, NgFor],
+  imports: [NgIf, FormsModule, NgFor, NgStyle, CommonModule],
   templateUrl: './task.component.html',
-  styleUrl: './task.component.css'      
+  styleUrl: './task.component.css',
+  providers: [{ provide: LOCALE_ID, useValue: 'es' }]     
 })
 export class TaskComponent {
 
@@ -20,7 +28,9 @@ export class TaskComponent {
     tags: []
   }
 
+  due_date = new Date();
   public tags:any = []
+  public tasks:any[] = []
 
 
   constructor(private taskService: TaskService, private authService: AuthService) { }
@@ -31,6 +41,19 @@ export class TaskComponent {
         this.getTags(data);
       }
     })
+
+    this.taskService.getTasksByUser().subscribe({
+      next: (data) => {
+        console.log(data)
+        this.getTasks(data)
+        
+      }
+    })
+  }
+
+
+  getTasks(data:any){
+    this.tasks = data
   }
 
 
@@ -40,7 +63,7 @@ export class TaskComponent {
   }
 
   getTags(data:any){
-    let arrayAux  = [];
+    let arrayAux  = []
     for(let tag of data){
       arrayAux.push({
         'id': tag.id,
@@ -53,8 +76,8 @@ export class TaskComponent {
   }
 
   agregarTarea(){
-    console.log(this.newTask)
-    this.newTask.end_date = new Date(this.newTask.end_date).toISOString();
+    console.log(`Agregando tarea ${this.newTask.tags}`)
+    this.newTask.end_date = new Date(this.due_date).toISOString()
 
     this.taskService.createTask(this.newTask).subscribe({
       next: (data) => {
@@ -62,5 +85,15 @@ export class TaskComponent {
         this.activarModal();
       }
     })
+
+    this.taskService.getTasksByUser().subscribe({
+      next: (data) => {
+        console.log(data)
+        this.getTasks(data)
+        
+      }
+    })
+
+    
   }
 }

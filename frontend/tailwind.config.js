@@ -20,6 +20,7 @@ module.exports = {
         'dash': '90vh',
         'header': '10%', 
         'content': '90%', 
+        'card': '32%'
       },
 
       fontSize:{

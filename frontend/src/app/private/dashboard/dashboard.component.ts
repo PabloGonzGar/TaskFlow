@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 import { TaskService } from '../../core/services/task.service';
 import { compileNgModule } from '@angular/compiler';
 import { AuthService } from '../../core/auth/auth.service';
+import { NgFor, NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  imports: [NgFor, NgStyle],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
   constructor(private taskService: TaskService, private authService: AuthService) { }
 
-  public tareas_recomendadas:any
+  public tareas_recomendadas:any[]=[]
 
 
   ngOnInit() {
@@ -32,24 +33,7 @@ export class DashboardComponent {
   }
 
   procesar_tareas(response:any){
-    let data = (response['message'].toString()).split("-")
-
-    let arrayAux = []
-    
-    for(let task of data){
-      let lineas = task.trim().split("\n")
-      let arrayTareas = []
-      for(let linea of lineas){
-        let clave = linea.split(":")[0]
-        let valor = linea.split(":")[1]
-        if (clave == "categoria"){
-          valor=valor.split(',')
-        }
-        arrayTareas.push({[clave]: valor})
-      }
-      arrayAux.push({arrayTareas})
-    }
-    this.tareas_recomendadas = arrayAux
+    this.tareas_recomendadas  = JSON.parse(response['message'].split('json')[1].split('```')[0])
     console.log(this.tareas_recomendadas)
   }
 }

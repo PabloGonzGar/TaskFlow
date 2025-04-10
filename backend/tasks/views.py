@@ -129,9 +129,11 @@ def get_tasks(request):
                 tags = TaskTag.objects.filter(task=task)
                 array_tags = []
                 for tag in tags:
+                    tag_id = tag.tag.id
                     tag_name = tag.tag.name
                     tag_color = tag.tag.color
                     array_tags.append({
+                        'id' : tag_id,
                         'name': tag_name,
                         'color': tag_color,
                     })
@@ -152,6 +154,77 @@ def get_tasks(request):
     except Exception as e:
         return JsonResponse({'error': f'Error al obtener las tareas: {str(e)}'}, status=500)
 # actualizar una tarea
+
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def update_task(request):
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'El unico método permitido es PUT'}, status=405)
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return JsonResponse({'error': 'No autorizado'}, status=401)
+        
+        token = auth_header.split(' ')[1]
+        try:
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']
+            user = User.objects.get(id=user_id)
+        except Exception as e:
+            return JsonResponse({'error': f'Error al validar el token: {str(e)}'}, status=401)
+        
+        if not user or user.is_anonymous:
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+        
+
+        data = json.loads(request.body)
+        title = data.get('title')
+        description = data.get('description')
+        start_date =  datetime.now().strftime('%Y-%m-%d')
+        end_date = data.get('end_date')
+        tags = data.get('tags')
+        id = data.get('id')
+
+        if not title or not description or not end_date or not id:
+            return JsonResponse({'error': 'Faltan datos obligatorios'}, status=400)
+        
+
+        # Validar que la fecha sea posterior a la actual
+        date_formatted = parser.parse(end_date)
+        if is_naive(date_formatted):
+            date_formatted = make_aware(date_formatted)
+
+        date_formatted = date_formatted.strftime('%Y-%m-%d %H:%M:%S')
+        
+        if date_formatted < datetime.now().strftime('%Y-%m-%d %H:%M:%S'):
+            return JsonResponse({'error': 'La fecha debe ser posterior a la actual'}, status=400)
+
+        try:
+            task = Task.objects.get(id=id)
+            task.title = title
+            task.description = description
+            task.start_date = start_date
+            task.end_date = end_date
+            task.save()
+            taskTag = TaskTag.objects.filter(task=task)
+            taskTag.delete()
+            for tag_id in tags:
+                try:
+                    tag = Tag.objects.get(id=tag_id)  
+                    taskTag = TaskTag(task=task, tag=tag)
+                    taskTag.save()  
+                except Tag.DoesNotExist:
+                    return JsonResponse({'error': f'La etiqueta con ID {tag_id} no existe'}, status=400)
+                except TaskTag.DoesNotExist:    
+                    taskTag = TaskTag(task=task, tag=tag)
+                    taskTag.save()
+                
+            return JsonResponse({'message': 'Tarea actualizada correctamente'}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': f'Error al actualizar la tarea: {str(e)}'}, status=500)
+    except Exception as e:
+        return JsonResponse({'error': f'Error al actualizar la tarea: {str(e)}'}, status=500)
 
 
 # eliminar una tarea
@@ -189,24 +262,46 @@ def get_recommendations(request):
         #Sacar datos de la base de datos 
         try:
             tasks = Task.objects.filter(user=user)
-            taskTags = TaskTag.objects.filter(task__in=tasks)
-            print('tareas de usuario' + str(tasks))
+            result = []
+            for task in tasks:
+                tags = TaskTag.objects.filter(task=task)
+                array_tags = []
+                for tag in tags:
+                    tag_name = tag.tag.name
+                    tag_color = tag.tag.color
+                    array_tags.append({
+                        'name': tag_name,
+                        'color': tag_color,
+                    })
+                result.append({
+                    'id': task.id,
+                    'title': task.title,
+                    'description': task.description,
+                    'start_date': task.start_date,
+                    'end_date': task.end_date,
+                    'status': task.status,
+                    'tags': array_tags,
+                })
         except Exception as e:
             return JsonResponse({'error': f'Error al obtener las tareas: {str(e)}'}, status=500)
 
+
         prompt = f"""
-            Eres un experto de gestion y recomendacion de tareas,
-            Para las siguientes tareas: {tasks}, quiero que me ayudes a hacer 
-            una recomendacion por relevancia que creas mas importante y me devuelvas 5 tareas como maximo.
-            aqui tienes los tags: {taskTags}
-            devuelvemelas estrictamente en el siguiente formato:
-            titulo:dato
-            descripcion:dato
-            categoria:name:color;name:color;...(debes responder con los tags)
-            Cada tarea separalo mediante el caracter -  
-            Si no encuentras ninguna recomendacion, inventate 3 tareas con un titulo y una descripcion y dos categorias cada una y no digas nada mas que las tareas .
-            No digas nada mas que las tareas, pues se complica acceder a los datos despues, ni si quiera fuera del json 
-        """
+                Eres un sistema de recomendación de tareas. Devuelve exactamente 4 tareas como máximo en formato JSON estricto. 
+                Formato obligatorio:
+                [
+                {{
+                    "titulo": "string",
+                    "descripcion": "string",
+                    "categoria": [
+                    {{"name": "string", "color": "hex"}}
+                    ]
+                }}
+                ]
+                NO debes escribir mas que el contenido interno de los json. Si no encuentras nada devuelve las tareas con algo como nada por aqui de momento
+                Tareas: {result}
+            """
+
 
 
         try:
@@ -214,6 +309,7 @@ def get_recommendations(request):
         # Inferencia a gemini
             response = model.generate_content(prompt)
             result = response.text
+            print(result)
         except Exception as e:
             return JsonResponse({'error': f'Error al realizar la inferencia: {str(e)}'}, status=500)
 
@@ -249,5 +345,27 @@ def get_tags(request):
 
     except Exception as e:
         return JsonResponse({'error-message': str(e)}, status=500)
+
+# eliminar task
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def delete_task(request):
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'El unico metodo permitido es DELETE'}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+    except Exception as e:
+        return JsonResponse({'error': f'Error al validar los datos: {str(e)}'}, status=400)
+
+    try:
+        taskTag = TaskTag.objects.filter(task__id=id)
+        for tag in taskTag:
+            tag.delete()
+        task = Task.objects.get(id=id)
+        task.delete()
+        return JsonResponse({'message': 'Tarea eliminada correctamente'}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': f'Error al eliminar la tarea: {str(e)}'}, status=500)
 
 # crear recordatorio via email

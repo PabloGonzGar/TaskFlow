@@ -9,7 +9,6 @@ export class TaskService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-
   api_url = 'http://127.0.0.1:8000/api/tasks/'
 
   // para las peticiones, al haber auth, se debe agregar el token
@@ -22,8 +21,6 @@ export class TaskService {
       'Content-Type': 'application/json'
     });
   }
-
-
 
   getRecomendedTasks() {
     return this.http.get(this.api_url + 'recommendations/', {headers: this.getHeaders()})
@@ -39,5 +36,9 @@ export class TaskService {
 
   getTasksByUser(){
     return this.http.get(this.api_url + 'tasks/', {headers: this.getHeaders()})
+  }
+
+  updateTask(task:any){
+    return this.http.put(this.api_url + 'update/', task, {headers: this.getHeaders()})
   }
 }

@@ -45,5 +45,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Stats(models.Model):
     completed_tasks = models.IntegerField(default=0)
     pending_tasks = models.IntegerField(default=0)
-    urgent_tasks = models.IntegerField(default=0)
+    uncompleted_tasks = models.IntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

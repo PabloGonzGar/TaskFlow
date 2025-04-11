@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -227,7 +226,6 @@ def update_task(request):
         return JsonResponse({'error': f'Error al actualizar la tarea: {str(e)}'}, status=500)
 
 
-# eliminar una tarea
 
 
 # mostrar recomendaciones haciendo inferencia a gemini 
@@ -370,3 +368,5 @@ def delete_task(request, id):
 
 
 # crear recordatorio via email
+
+

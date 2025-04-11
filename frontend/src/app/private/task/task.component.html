@@ -44,6 +44,28 @@
             </form>
         </div>
     </div>
+
+    <div *ngIf="this.modalDelete">
+        <div class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50" clickable
+            (click)="activarModalDelete()">
+            <div class="w-3/5 h-fit bg-white rounded-lg shadow-2xl px-5 py-20 flex flex-col gap-5 justify-center items-center"
+                (click)="$event.stopPropagation()">
+                <h1 class="text-4xl font-bold ">¿Estas seguro de eliminar esta tarea?</h1>
+                <p class="text-2xl font-medium text-stone-400">Esta accion es irreversible</p>
+                <div class="flex w-3/4 gap-5 justify-center items-center ">
+                    <input type="submit"
+                        class="text-white bg-red-500 py-2 px-3 w-fit text-xl rounded-lg hover:bg-red-700 hover:cursor-pointer hover:shadow-lg"
+                        value="Eliminar tarea" (click)="deleteTask()">
+
+                    <div class="py-2 hover:cursor-pointer " (click)="activarModalDelete()">
+
+                        <p class="text-red-500 text-2xl hover:text-decoration-underline">Cancelar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
     <div *ngIf="this.modalUpdate"
         class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50" clickable
         (click)="activarModalUpdate()">
@@ -88,7 +110,7 @@
                     class="text-white bg-primary-100 py-2 mt-10 w-full text-xl rounded-lg hover:bg-blue-700 hover:cursor-pointer hover:shadow-lg"
                     value="Actualizar tarea" (click)="actualizarTarea()">
 
-                    <button class="text-white bg-red-500 py-2 mt-10 w-full text-xl rounded-lg hover:bg-red-700 hover:cursor-pointer hover:shadow-lg" click>
+                    <button class="text-white bg-red-500 py-2 mt-10 w-full text-xl rounded-lg hover:bg-red-700 hover:cursor-pointer hover:shadow-lg" (click)="activarModalDelete()" (click)="activarModalUpdate()">
                         <div class="flex justify-center items-center gap-2">
 
                             Eliminar

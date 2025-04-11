@@ -41,4 +41,13 @@ export class TaskService {
   updateTask(task:any){
     return this.http.put(this.api_url + 'update/', task, {headers: this.getHeaders()})
   }
+
+  deleteTask(task:any){
+    return this.http.delete(this.api_url + 'delete/' + task +'/', {headers: this.getHeaders()})
+  }
+
+  
 }
+
+
+

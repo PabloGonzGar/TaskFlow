@@ -340,7 +340,6 @@ def get_tags(request):
 
         print(result)
 
-
         return JsonResponse(result, status=200, safe=False)
 
     except Exception as e:
@@ -349,23 +348,25 @@ def get_tags(request):
 # eliminar task
 @csrf_exempt
 @permission_classes([IsAuthenticated])
-def delete_task(request):
+def delete_task(request, id):
     if request.method != 'DELETE':
-        return JsonResponse({'error': 'El unico metodo permitido es DELETE'}, status=405)
-    try:
-        data = json.loads(request.body)
-        id = data.get('id')
-    except Exception as e:
-        return JsonResponse({'error': f'Error al validar los datos: {str(e)}'}, status=400)
+        return JsonResponse({'error': 'El único método permitido es DELETE'}, status=405)
 
     try:
-        taskTag = TaskTag.objects.filter(task__id=id)
-        for tag in taskTag:
-            tag.delete()
         task = Task.objects.get(id=id)
+        
+        task_tags = TaskTag.objects.filter(task=task)
+        for tag in task_tags:
+            tag.delete()
+
         task.delete()
+
         return JsonResponse({'message': 'Tarea eliminada correctamente'}, status=200)
+
+    except Task.DoesNotExist:
+        return JsonResponse({'error': 'La tarea no existe'}, status=404)
     except Exception as e:
         return JsonResponse({'error': f'Error al eliminar la tarea: {str(e)}'}, status=500)
+
 
 # crear recordatorio via email

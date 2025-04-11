@@ -22,6 +22,8 @@ export class TaskComponent {
 
   public modal = false
   public modalUpdate = false
+  public modalDelete = false
+  public deleteID = ''
   public newTask = {
     title:'',
     description:'',
@@ -38,6 +40,8 @@ export class TaskComponent {
     start_date:'',
     id:''
   }
+
+
 
   due_date = new Date()
   public tags:any = []
@@ -72,6 +76,14 @@ export class TaskComponent {
     this.modal = !this.modal
   }
 
+
+  activarModalDelete(){
+    this.modalDelete = !this.modalDelete
+    this.deleteID = this.updateTask.id
+    console.log(this.deleteID)
+
+  }
+
   getTags(data:any){
     let arrayAux  = []
     for(let tag of data){
@@ -83,6 +95,18 @@ export class TaskComponent {
     }
     this.tags = arrayAux
     console.log(this.tags)
+  }
+
+  deleteTask(){
+    console.log(this.deleteID)
+    this.taskService.deleteTask(this.deleteID).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.activarModalDelete()
+      }
+    })
+    window.location.reload()
+
   }
 
   agregarTarea(){

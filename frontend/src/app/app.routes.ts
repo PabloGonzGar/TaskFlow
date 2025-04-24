@@ -7,12 +7,14 @@ import { StatsComponent } from './private/stats/stats.component';
 import { AuthGuard } from './core/auth/auth.guard';
 import { TaskComponent } from './private/task/task.component';
 import { DashboardComponent } from './private/dashboard/dashboard.component';
+import { DashboardComponent as AdminComponent}   from './private/admin/dashboard/dashboard.component';
 
 export const routes: Routes = [
     {path:  '', redirectTo:'landing', pathMatch: 'full'},
     {path: 'landing', component: LandingComponent},
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
+    {path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
     {path: 'dashboard', component: LayoutComponent, canActivate: [AuthGuard],
         children: [
             {path: '', component: DashboardComponent},

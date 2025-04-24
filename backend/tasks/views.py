@@ -34,7 +34,6 @@ def create_task(request):
     # Obtener datos del formulario
 
     try:
-
         data = json.loads(request.body)
         title = data.get('title')
         description = data.get('description')
@@ -58,27 +57,23 @@ def create_task(request):
             date_formatted = make_aware(date_formatted)
 
         date_formatted = date_formatted.strftime('%Y-%m-%d %H:%M:%S')
-
         
         if date_formatted < datetime.now().strftime('%Y-%m-%d %H:%M:%S'):
             return JsonResponse({'error': 'La fecha debe ser posterior a la actual'}, status=400)
         
-
         auth_header = request.headers.get('Authorization')
         if not auth_header or not auth_header.startswith('Bearer '):
             return JsonResponse({'error': 'No autorizado'}, status=401)
-
         token = auth_header.split(' ')[1]
         try:
             access_token = AccessToken(token)
             user_id = access_token['user_id']
             user = User.objects.get(id=user_id)
-
         except Exception as e:
             return JsonResponse({'error': f'Error al validar el token: {str(e)}'}, status=401)
         
 
-        # Crear la tarea 
+        # Crear la tarea
         task = Task(title=title, description=description, start_date=start_date, end_date=end_date, status='pending', user=user)
         task.save()
         for tag_id in tags:

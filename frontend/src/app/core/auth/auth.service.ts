@@ -16,6 +16,7 @@ export class AuthService {
     id: '',
     email: '',
     name: '',
+    is_admin: false
   }
 
 
@@ -28,11 +29,13 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/users/login/`, credentials).pipe(
       tap((response: any) => {
         if (response && response.access_token && response.refresh_token) {
+          console.log(response)
           localStorage.setItem(this.accessTokenKey, response.access_token)
           localStorage.setItem(this.refreshTokenKey, response.refresh_token)
           this.currentUser.id = response.user.id
           this.currentUser.email = response.user.email
           this.currentUser.name = response.user.name
+          this.currentUser.is_admin = response.user.is_admin
           localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
           this.isLoggedInSubject.next(true)
         }

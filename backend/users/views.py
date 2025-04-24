@@ -109,7 +109,7 @@ def user_login(request):
         
         
         #Verificar si el usuario existe y la password es correcta
-        if User.objects.filter(email=email).exists() and  User.objects.get(email=email).check_password(password):
+        if User.objects.filter(email=email).exists() and User.objects.get(email=email).check_password(password):
                 
             #Sacar al usuario
             user = User.objects.get(email=email)
@@ -118,6 +118,7 @@ def user_login(request):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
+            print(user.is_superuser)
 
             #Devolver codigo success 200
             return JsonResponse({
@@ -125,11 +126,13 @@ def user_login(request):
                 'user':{
                     'id': user.id,
                     'email': email,
-                    'name': user.name
+                    'name': user.name,
+                    'is_admin': user.is_superuser
                 },
                 'access_token': access_token,
                 'refresh_token': refresh_token
             },status=200)
+
                 
         else:
             return JsonResponse({'error': 'Email o password incorrecto'}, status=400)
@@ -251,5 +254,3 @@ def show_user_stats(request):
 #Funcion de eliminar un usuario (solo si eres superuser)
 
 #Funcion de obtener el numero de usuarios registrados
-
-

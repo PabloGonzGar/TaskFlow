@@ -1,18 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
+import { NgFor } from '@angular/common';
+
 
 @Component({
   selector: 'app-stats',
-  imports: [],
+  imports: [NgFor],
   templateUrl: './stats.component.html',
   styleUrl: './stats.component.css'
 })
 export class StatsComponent {
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private renderer: Renderer2, private el: ElementRef) { }
 
-  userStats:any[ ] = []
+  userStats = {
+    completed_tasks: 0,
+    total_tasks: 0,
+    uncompleted_tasks: 0,
+    pending_tasks: 0
+  }
 
-
+  ngAfterViewInit() {
+    
+  }
 
   ngOnInit(): void {
     this.userService.getUserStats().subscribe({
@@ -23,9 +32,7 @@ export class StatsComponent {
     })
   }
 
-
-  getStats(data:any){
-    this.userStats = data
-    console.log(this.userStats)
+  getStats(data: any) {
+    this.userStats = data  
   }
 }

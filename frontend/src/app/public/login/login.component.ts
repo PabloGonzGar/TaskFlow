@@ -20,28 +20,37 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    if(this.authService.currentUser){
+    if (this.authService.currentUser) {
       this.authService.refreshToken()
       console.log("despues de refreshToken")
       console.log(this.authService.getAccessToken())
       console.log(this.authService.getRefreshToken())
-      this.router.navigate(['/dashboard'])
+      let user = localStorage.getItem('currentUser')
+      if (user) {
+
+        JSON.parse(user).is_admin == true ? this.router.navigate(['/admin']) : this.router.navigate(['/dashboard'])
+      }
+
     }
   }
 
-  login():void{
+  login(): void {
     this.errorMessage = null
     this.authService.login(this.creedentials).subscribe({
       next: () => {
         console.log('exito')
         console.log(this.authService.currentUser);
-        this.router.navigate(['/dashboard'])
+        let user = localStorage.getItem('currentUser')
+        if (user) {
+
+          JSON.parse(user).is_admin == true ? this.router.navigate(['/admin']) : this.router.navigate(['/dashboard'])
+        }
       },
       error: (error) => {
         console.log(error);
         this.errorMessage = error.error.error
       }
-      
+
     })
   }
 

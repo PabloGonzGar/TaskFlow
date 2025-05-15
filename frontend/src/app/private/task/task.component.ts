@@ -8,6 +8,8 @@ import { registerLocaleData } from '@angular/common'
 import localeEs from '@angular/common/locales/es'
 import { CommonModule } from '@angular/common'
 
+
+
 registerLocaleData(localeEs)
 
 
@@ -18,6 +20,7 @@ registerLocaleData(localeEs)
   styleUrl: './task.component.css',
   providers: [{ provide: LOCALE_ID, useValue: 'es' }]     
 })
+
 export class TaskComponent {
 
   public modal = false
@@ -50,6 +53,8 @@ export class TaskComponent {
 
   constructor(private taskService: TaskService, private authService: AuthService) { }
 
+  
+
   ngOnInit(): void {
     this.taskService.getAllTags().subscribe({
       next: (data) => {
@@ -64,6 +69,8 @@ export class TaskComponent {
       }
     })
   }
+
+
 
 
   getTasks(data:any){

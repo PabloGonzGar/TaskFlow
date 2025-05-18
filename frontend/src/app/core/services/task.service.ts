@@ -22,6 +22,11 @@ export class TaskService {
     });
   }
 
+  setCompleteTask(task:any){
+    return this.http.put(this.api_url + 'completed/' + task +'/', {headers: this.getHeaders()})
+  }
+
+
   getRecomendedTasks() {
     return this.http.get(this.api_url + 'recommendations/', {headers: this.getHeaders()})
   }

@@ -72,6 +72,14 @@ export class TaskComponent {
 
 
 
+  completeTask(id: string) {
+    this.taskService.setCompleteTask(id).subscribe({
+      next: (data) => {
+        console.log(data)
+      }
+    })
+    window.location.reload()
+  }
 
   getTasks(data:any){
     this.tasks = data

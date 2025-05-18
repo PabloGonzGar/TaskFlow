@@ -241,6 +241,10 @@ def show_user_stats(request):
 
     except Exception as e:
         return JsonResponse({'error': f'Ha ocurrido algun errror: {str(e)}'}, status=401)
+    
+
+
+
 
 ''' --------------------------------------------------- LOGICA DE NEGOCIO DE ADMINISTRADORES ----------------------------------------------------------------- '''
 

@@ -12,6 +12,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from dateutil import parser
 from django.utils.timezone import make_aware, is_naive
+from django.conf import settings
+from django.core.mail import send_mail
 
 """
 conf de la api key de gemini para hacer la inferencia
@@ -362,6 +364,33 @@ def delete_task(request, id):
         return JsonResponse({'error': f'Error al eliminar la tarea: {str(e)}'}, status=500)
 
 
-# crear recordatorio via email
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def set_task_completed(request, id):
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'El unico metodo permitido es PUT'}, status=405)
+    
+    try:
+        task = Task.objects.get(id=id)
+        task.status = 'completed'
+        task.save()
+        return JsonResponse({'message': 'Tarea actualizada correctamente'}, status=200)
+    except Task.DoesNotExist:
+        return JsonResponse({'error': 'La tarea no existe'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': f'Error al actualizar la tarea: {str(e)}'}, status=500)
+    
+# crear recordatorio via email cuando la tarea vence
 
+def send_reminder_email(task):
+    subject = f"Recordatorio: Tu tarea {task.title} vence pronto" 
+    message = f"Hola {task.user.name}, tu tarea {task.title} termina el dia {task.end_date}"
+    recipient = task.user.email
+    send_mail(
+        subject, 
+        message, 
+        settings.DEFAULT_FROM_EMAIL,
+        [recipient],
+        fail_silently=False,
+        )
 

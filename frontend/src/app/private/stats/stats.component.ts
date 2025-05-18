@@ -1,7 +1,8 @@
 import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
-import { Chart, ChartOptions, ChartType ,PolarAreaController,RadialLinearScale,ArcElement,Legend,Title,Tooltip} from 'chart.js';
+import { Chart, ChartOptions, ChartType, PolarAreaController, RadialLinearScale, ArcElement, Legend, Title, Tooltip } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -10,8 +11,14 @@ import { BaseChartDirective } from 'ng2-charts';
   templateUrl: './stats.component.html',
   styleUrl: './stats.component.css'
 })
+
+
 export class StatsComponent {
-  constructor(private userService: UserService, private renderer: Renderer2, private el: ElementRef) { }
+  constructor(private userService: UserService,
+    private renderer: Renderer2,
+    private el: ElementRef,
+    private cdRef: ChangeDetectorRef
+  ) { }
 
   userStats = {
     completed_tasks: 0,
@@ -30,20 +37,14 @@ export class StatsComponent {
         label: 'Tareas',
         data: [0, 0, 0, 0],
         backgroundColor: [
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(153, 102, 255, 0.2)'
+          '',
+          '',
+          '',
+          ''
         ],
-        borderColor: [
-          'rgba(75, 192, 192, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(153, 102, 255, 1)'
-        ],
-        borderWidth: 1
+        hoverOffset : 0
       }
-    ]
+    ], 
   };
 
   chartOptions: ChartOptions = {
@@ -55,6 +56,32 @@ export class StatsComponent {
       title: {
         display: false,
         text: 'Estadísticas de tareas'
+      }
+    },
+    scales:{
+      r: {
+        grid: {
+          display: true,
+          lineWidth: 1
+        },
+        ticks: {
+          display: true,
+          stepSize: 1,
+          font: {
+            size: 12,
+            family: 'Inter',
+            style: 'normal',
+            lineHeight: 1.5
+          }
+        }
+
+      }
+    },
+
+    animations:{
+      radius: {
+        duration: 1000,
+        easing: 'easeOutSine'
       }
     }
   };
@@ -74,13 +101,29 @@ export class StatsComponent {
   }
 
 
-   updateChartData() {
+  updateChartData() {
 
-    this.chartData.datasets[0].data = [
-      this.userStats.completed_tasks,
-      this.userStats.pending_tasks,
-      this.userStats.uncompleted_tasks,
-      this.userStats.total_tasks
-    ];
+
+
+    this.chartData = {
+      labels: this.chartLabels,
+      datasets: [{
+          label: 'Tareas',
+          data: [this.userStats.completed_tasks,
+          this.userStats.pending_tasks,
+          this.userStats.uncompleted_tasks,
+          this.userStats.total_tasks],
+          backgroundColor: [
+            'rgba(68, 255, 0, 0.3)',
+            'rgba(246, 185, 29, 0.3)',
+            'rgba(255, 0, 0, 0.49)',
+            'rgba(0, 41, 246, 0.32)'
+          ],
+          hoverOffset: 20
+      }]
+    };
+
+    this.cdRef.detectChanges();
+
   }
 }

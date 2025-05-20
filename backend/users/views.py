@@ -17,7 +17,7 @@ from tasks.models import Task
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import make_aware, is_naive
-
+from django.utils import timezone
 
 
 
@@ -166,7 +166,7 @@ def user_logout(request):
     return JsonResponse({'message': 'Token de refresco revocado'}, status=200)
 
 
-
+@csrf_exempt
 def refresh_token(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Metodo no permitido'}, status=405)
@@ -222,9 +222,14 @@ def show_user_stats(request):
         
         if not user or user.is_anonymous:
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
-        
 
+        #sacar las tareas ya vencidas, es decir cuando la fecha de vencimiento es menor que la fecha actual
         total_tasks = Task.objects.filter(user=user)
+        for task in total_tasks:
+            check_task_completion(task)
+                
+
+
         completed_tasks = Task.objects.filter(user=user, status='completed')
         pending_tasks = Task.objects.filter(user=user, status='pending')
         uncompleted_tasks = Task.objects.filter(user=user, status='uncompleted')
@@ -244,12 +249,18 @@ def show_user_stats(request):
     
 
 
+def check_task_completion(task):
+    now = timezone.now()
+    if task.end_date < now:
+        task.status = 'uncompleted'
+        task.save()
 
 
 ''' --------------------------------------------------- LOGICA DE NEGOCIO DE ADMINISTRADORES ----------------------------------------------------------------- '''
 
 
 ''' DEJAR PARA LO ULTIMO '''
+
 
 #Crear un nuevo usuario (solo si eres superuser)
 

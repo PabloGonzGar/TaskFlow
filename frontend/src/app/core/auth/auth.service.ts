@@ -95,16 +95,21 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
     const refreshToken = this.getRefreshToken()
-    console.log(refreshToken)
-    console.log(this.getAccessToken())
     if (!refreshToken) {
       this.clearTokens()
       return throwError(() => new Error('No refresh token available'))
     }
 
-    return this.http.post(`${this.apiUrl}/users/refresh-token`, { refreshToken }).pipe(
+
+    console.log('refreshing token')
+    
+    return this.http.post(`${this.apiUrl}/users/refresh-token/`, { refreshToken }).pipe(
       tap((response: any) => {
+        console.log('refreshing token1')
         if (response && response.access_token) {
+          console.log(response)
+          localStorage.removeItem(this.accessTokenKey)
+          localStorage.removeItem(this.refreshTokenKey)
           localStorage.setItem(this.accessTokenKey, response.access_token)
           localStorage.setItem(this.refreshTokenKey, response.refresh_token)
           this.isLoggedInSubject.next(true)

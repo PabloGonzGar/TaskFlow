@@ -21,14 +21,25 @@ export class LoginComponent {
 
   ngOnInit(): void {
     if (this.authService.currentUser) {
-      this.authService.refreshToken()
-      console.log("despues de refreshToken")
-      console.log(this.authService.getAccessToken())
-      console.log(this.authService.getRefreshToken())
       let user = localStorage.getItem('currentUser')
       if (user) {
 
-        JSON.parse(user).is_admin == true ? this.router.navigate(['/admin']) : this.router.navigate(['/dashboard'])
+        //comprobar que el token sea válido
+
+        this.authService.refreshToken().subscribe({
+          next: () => {
+            console.log('exito')
+            console.log(this.authService.currentUser);
+          }
+          ,
+          error: (error) => {
+            console.log(error);
+            this.errorMessage = error.error.error
+          }
+        })
+
+
+        // JSON.parse(user).is_admin == true ? this.router.navigate(['/admin']) : this.router.navigate(['/dashboard'])
       }
 
     }
@@ -42,7 +53,7 @@ export class LoginComponent {
         console.log(this.authService.currentUser);
         let user = localStorage.getItem('currentUser')
         if (user) {
-
+          
           JSON.parse(user).is_admin == true ? this.router.navigate(['/admin']) : this.router.navigate(['/dashboard'])
         }
       },

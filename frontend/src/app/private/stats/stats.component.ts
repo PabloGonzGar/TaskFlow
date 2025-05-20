@@ -3,11 +3,12 @@ import { UserService } from '../../core/services/user.service';
 import { Chart, ChartOptions, ChartType, PolarAreaController, RadialLinearScale, ArcElement, Legend, Title, Tooltip } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChangeDetectorRef } from '@angular/core';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 
 @Component({
   selector: 'app-stats',
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective, MatProgressBar],
   templateUrl: './stats.component.html',
   styleUrl: './stats.component.css'
 })
@@ -26,6 +27,10 @@ export class StatsComponent {
     uncompleted_tasks: 0,
     pending_tasks: 0
   };
+
+  progreso = 0
+  pendientes = 0
+  sinCompletar = 0
 
   chartType: ChartType = 'polarArea';
   chartLabels = ['Completadas', 'Pendientes', 'Sin completar', 'Totales'];
@@ -97,6 +102,9 @@ export class StatsComponent {
 
   getStats(data: any) {
     this.userStats = data
+    this.progreso = Math.round((this.userStats.completed_tasks / this.userStats.total_tasks) * 100)
+    this.pendientes = Math.round((this.userStats.pending_tasks / this.userStats.total_tasks) * 100)
+    this.sinCompletar = Math.round((this.userStats.uncompleted_tasks / this.userStats.total_tasks) * 100)
     this.updateChartData()
   }
 

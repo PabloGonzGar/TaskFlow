@@ -14,6 +14,7 @@ from dateutil import parser
 from django.utils.timezone import make_aware, is_naive
 from django.conf import settings
 from django.core.mail import send_mail
+from users.views import check_task_completion
 
 """
 conf de la api key de gemini para hacer la inferencia
@@ -31,7 +32,7 @@ genai.configure(api_key="AIzaSyCH_CVlqllzqiXjlJcFLHIfwle0TUz_qoc")
 @permission_classes([IsAuthenticated])
 def create_task(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'El unico método permitido es POST'}, status=405)
+        return JsonResponse({'error': 'El unico metodo permitido es POST'}, status=405)
 
     # Obtener datos del formulario
 
@@ -101,7 +102,7 @@ def create_task(request):
 def get_tasks(request):
     try:
         if request.method != 'GET':
-            return JsonResponse({'error': 'El unico método permitido es GET'}, status=405)
+            return JsonResponse({'error': 'El unico metodo permitido es GET'}, status=405)
         
         auth_header = request.headers.get('Authorization')
         if not auth_header or not auth_header.startswith('Bearer '):
@@ -122,6 +123,7 @@ def get_tasks(request):
             tasks = Task.objects.filter(user=user)
             result = []
             for task in tasks:
+                check_task_completion(task)
                 tags = TaskTag.objects.filter(task=task)
                 array_tags = []
                 for tag in tags:
@@ -155,7 +157,7 @@ def get_tasks(request):
 @permission_classes([IsAuthenticated])
 def update_task(request):
     if request.method != 'PUT':
-        return JsonResponse({'error': 'El unico método permitido es PUT'}, status=405)
+        return JsonResponse({'error': 'El unico metodo permitido es PUT'}, status=405)
     try:
         auth_header = request.headers.get('Authorization')
         if not auth_header or not auth_header.startswith('Bearer '):
@@ -232,7 +234,7 @@ def update_task(request):
 def get_recommendations(request):
     try:
         if request.method != 'GET':
-            return JsonResponse({'error': 'El unico método permitido es GET'}, status=405)
+            return JsonResponse({'error': 'El unico metodo permitido es GET'}, status=405)
 
         auth_header = request.headers.get('Authorization')
         if not auth_header or not auth_header.startswith('Bearer '):
@@ -259,30 +261,31 @@ def get_recommendations(request):
             tasks = Task.objects.filter(user=user)
             result = []
             for task in tasks:
-                tags = TaskTag.objects.filter(task=task)
-                array_tags = []
-                for tag in tags:
-                    tag_name = tag.tag.name
-                    tag_color = tag.tag.color
-                    array_tags.append({
-                        'name': tag_name,
-                        'color': tag_color,
+                if task.status == 'pending':
+                    tags = TaskTag.objects.filter(task=task)
+                    array_tags = []
+                    for tag in tags:
+                        tag_name = tag.tag.name
+                        tag_color = tag.tag.color
+                        array_tags.append({
+                            'name': tag_name,
+                            'color': tag_color,
+                        })
+                    result.append({
+                        'id': task.id,
+                        'title': task.title,
+                        'description': task.description,
+                        'start_date': task.start_date,
+                        'end_date': task.end_date,
+                        'status': task.status,
+                        'tags': array_tags,
                     })
-                result.append({
-                    'id': task.id,
-                    'title': task.title,
-                    'description': task.description,
-                    'start_date': task.start_date,
-                    'end_date': task.end_date,
-                    'status': task.status,
-                    'tags': array_tags,
-                })
         except Exception as e:
             return JsonResponse({'error': f'Error al obtener las tareas: {str(e)}'}, status=500)
 
 
         prompt = f"""
-                Eres un sistema de recomendación de tareas. Devuelve exactamente 4 tareas como máximo en formato JSON estricto. 
+                Eres un sistema de recomendacion de tareas. Devuelve exactamente 4 tareas como maximo en formato JSON estricto. 
                 Formato obligatorio:
                 [
                 {{
@@ -345,7 +348,7 @@ def get_tags(request):
 @permission_classes([IsAuthenticated])
 def delete_task(request, id):
     if request.method != 'DELETE':
-        return JsonResponse({'error': 'El único método permitido es DELETE'}, status=405)
+        return JsonResponse({'error': 'El único metodo permitido es DELETE'}, status=405)
 
     try:
         task = Task.objects.get(id=id)

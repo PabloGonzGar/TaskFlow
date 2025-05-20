@@ -18,9 +18,6 @@ export class DashboardComponent {
 
   ngOnInit() {
     this.authService.refreshToken()
-      console.log("despues de refreshToken")
-      console.log(this.authService.getAccessToken())
-      console.log(this.authService.getRefreshToken())
 
     this.taskService.getRecomendedTasks().subscribe(
       (data) => {

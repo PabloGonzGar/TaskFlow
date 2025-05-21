@@ -308,3 +308,79 @@ def get_all_task_stats(request):
 
     except Exception as e:
         return JsonResponse({'error': f'Ha ocurrido algun errror: {str(e)}'}, status=401)
+
+
+
+
+
+
+#obtener todos los usuarios
+
+def get_all_users(request):
+    if request.method != 'GET': 
+        return JsonResponse({'error': 'El unico ,metodo permitido es GET'}, status=405)
+
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return JsonResponse({'error': 'No autorizado'}, status=401)
+        
+        token = auth_header.split(' ')[1]
+        try:
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']
+            user = User.objects.get(id=user_id)
+        except Exception as e:
+            return JsonResponse({'error': f'Error al validar el token: {str(e)}'}, status=401)
+        
+        if not user or user.is_anonymous:
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+
+        total_users = User.objects.all()
+
+        result = {}
+
+        for user in total_users:
+            result[user.id] = {
+                'id': user.id,
+                'email': user.email,
+                'name': user.name,
+                'is_admin': user.is_superuser
+            }
+
+
+        return JsonResponse(result, status=200)
+
+    except Exception as e:
+        return JsonResponse({'error': f'Ha ocurrido algun errror: {str(e)}'}, status=401)
+    
+
+def delete_user(request, id):
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'El unico metodo permitido es DELETE'}, status=405)
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return JsonResponse({'error': 'No autorizado'}, status=401)
+        
+        token = auth_header.split(' ')[1]
+        try:
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']
+            user = User.objects.get(id=user_id)
+        except Exception as e:
+            return JsonResponse({'error': f'Error al validar el token: {str(e)}'}, status=401)
+        
+        if not user or user.is_anonymous:
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+
+        if user.is_superuser:
+            user_to_delete = User.objects.get(id=user_id)
+            user_to_delete.delete()
+            return JsonResponse({'message': 'Usuario eliminado'}, status=200)
+        else:
+            return JsonResponse({'error': 'No tiene permisos para eliminar el usuario'}, status=401)
+        
+    except Exception as e:
+        return JsonResponse({'error': f'Ha ocurrido algun errror: {str(e)}'}, status=401)
+        

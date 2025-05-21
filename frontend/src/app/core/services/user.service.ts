@@ -32,6 +32,14 @@ export class UserService {
     }
 
 
+    getAllUsers(){
+      return this.http.get(this.api_url +'admin/users/', {headers: this.getHeaders()})
+    }
+
+    deleteUser(id: number){
+      return this.http.delete(this.api_url +'admin/users/'+id+'/', {headers: this.getHeaders()})
+    }
+
 
 
 }

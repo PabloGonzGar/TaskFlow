@@ -262,10 +262,49 @@ def check_task_completion(task):
 ''' DEJAR PARA LO ULTIMO '''
 
 
-#Crear un nuevo usuario (solo si eres superuser)
+#obtener todas las estadisiticas de todas las tareas
 
-#Funcion de actualizar un usuario (solo si eres superuser)
+def get_all_task_stats(request):
+    if request.method != 'GET': 
+        return JsonResponse({'error': 'El unico ,metodo permitido es GET'}, status=405)
 
-#Funcion de eliminar un usuario (solo si eres superuser)
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return JsonResponse({'error': 'No autorizado'}, status=401)
+        
+        token = auth_header.split(' ')[1]
+        try:
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']
+            user = User.objects.get(id=user_id)
+        except Exception as e:
+            return JsonResponse({'error': f'Error al validar el token: {str(e)}'}, status=401)
+        
+        if not user or user.is_anonymous:
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
 
-#Funcion de obtener el numero de usuarios registrados
+        total_tasks = Task.objects.all()
+        for task in total_tasks:
+            check_task_completion(task)
+
+
+        total_users = User.objects.all()
+
+        completed_tasks = Task.objects.filter(status='completed')
+        pending_tasks = Task.objects.filter(status='pending')
+        uncompleted_tasks = Task.objects.filter(status='uncompleted')
+        
+        result = {
+            'total_users': total_users.count(),
+            'total_tasks': total_tasks.count(),
+            'completed_tasks': completed_tasks.count(),
+            'pending_tasks': pending_tasks.count(),
+            'uncompleted_tasks': uncompleted_tasks.count(),
+        }   
+
+
+        return JsonResponse(result, status=200)
+
+    except Exception as e:
+        return JsonResponse({'error': f'Ha ocurrido algun errror: {str(e)}'}, status=401)

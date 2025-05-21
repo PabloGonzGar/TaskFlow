@@ -1,0 +1,35 @@
+<div class="w-full h-full flex flex-col gap-10">
+  <h2 class="text-4xl font-semibold text-stone-800">Panel de Estadísticas</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white p-6 rounded-xl shadow text-center">
+      <h3 class="text-xl font-medium text-stone-700">Tareas Totales</h3>
+      <p class="text-3xl font-bold text-blue-600">{{ stats.total_tasks }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow text-center">
+      <h3 class="text-xl font-medium text-stone-700">Tareas Completadas</h3>
+      <p class="text-3xl font-bold text-green-500">{{ stats.completed_tasks }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow text-center">
+      <h3 class="text-xl font-medium text-stone-700">Tareas Pendientes</h3>
+      <p class="text-3xl font-bold text-yellow-500">{{ stats.pending_tasks }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow text-center">
+      <h3 class="text-xl font-medium text-stone-700">Tareas Incompletas</h3>
+      <p class="text-3xl font-bold text-red-500">{{ stats.uncompleted_tasks }}</p>
+    </div>
+  </div>
+
+  <div class="w-full mt-10 bg-white rounded-xl h-1/2 shadow p-10 flex flex-col items-center">
+    <h3 class="text-2xl font-semibold mb-6 text-stone-800">Distribución de Tareas</h3>
+    <div class="w-full max-w-lg h-full p-5  flex justify-center">
+      <canvas baseChart [data]="chartData" [type]="chartType" [options]="chartOptions" ></canvas>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow text-center w-full max-w-md self-center mt-10">
+    <h3 class="text-xl font-medium text-stone-700">Usuarios Totales</h3>
+    <p class="text-3xl font-bold text-indigo-600">{{ stats.total_users }}</p>
+  </div>
+</div>
+

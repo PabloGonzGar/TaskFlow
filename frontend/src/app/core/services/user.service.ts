@@ -27,6 +27,9 @@ export class UserService {
       return this.http.get(this.api_url+'stats/', {headers: this.getHeaders()})
     }
 
+    getAllUsersStats(){
+      return this.http.get(this.api_url+'admin/stats/', {headers: this.getHeaders()})
+    }
 
 
 

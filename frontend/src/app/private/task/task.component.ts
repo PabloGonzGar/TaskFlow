@@ -155,7 +155,7 @@ export class TaskComponent {
   }
 
   updateTasksOrder() {
-    const otherTasks = this.tasks.filter(t => t.status !== 'pending');
+    const otherTasks = this.tasks.filter(t => t.status=== 'pending');
     this.tasks = [...otherTasks, ...this.pendingTasks];
   }
 }

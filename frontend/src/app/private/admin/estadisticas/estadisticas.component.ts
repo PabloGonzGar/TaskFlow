@@ -1,40 +1,52 @@
-import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
-import { UserService } from '../../core/services/user.service';
-import { Chart, ChartOptions, ChartType, PolarAreaController, RadialLinearScale, ArcElement, Legend, Title, Tooltip } from 'chart.js';
+import { Component } from '@angular/core';
+import { UserService } from '../../../core/services/user.service';
 import { BaseChartDirective } from 'ng2-charts';
+import { Chart, ChartOptions, ChartType, PolarAreaController, RadialLinearScale, ArcElement, Legend, Title, Tooltip } from 'chart.js';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatProgressBar } from '@angular/material/progress-bar';
+import { Renderer2, ElementRef } from '@angular/core';
+
 
 
 @Component({
-  selector: 'app-stats',
-  imports: [BaseChartDirective, MatProgressBar],
-  templateUrl: './stats.component.html',
-  styleUrl: './stats.component.css'
+  selector: 'app-estadisticas',
+  imports: [BaseChartDirective],
+  templateUrl: './estadisticas.component.html',
+  styleUrl: './estadisticas.component.css'
 })
-
-
-export class StatsComponent {
+export class EstadisticasComponent {
   constructor(private userService: UserService,
     private renderer: Renderer2,
     private el: ElementRef,
     private cdRef: ChangeDetectorRef
   ) { }
 
-  userStats = {
-    completed_tasks: 0,
+  stats = {
+    total_users: 0,
     total_tasks: 0,
     uncompleted_tasks: 0,
-    pending_tasks: 0
+    pending_tasks: 0,
+    completed_tasks: 0
   };
 
-  progreso = 0
-  pendientes = 0
-  sinCompletar = 0
+  ngOnInit(): void {
+    this.userService.getAllUsersStats().subscribe({
+      next: (data) => {
+        console.log(data)
+        this.getStats(data)
+      }
+    })
+  }
+
 
   chartType: ChartType = 'polarArea';
   chartLabels = ['Completadas', 'Pendientes', 'Sin completar', 'Totales'];
 
+  getStats(data: any) {
+    this.stats = data
+    this.updateChartData()
+  }
+
+  
   chartData = {
     labels: this.chartLabels,
     datasets: [
@@ -85,23 +97,6 @@ export class StatsComponent {
     }
   };
 
-  ngOnInit(): void {
-    this.userService.getUserStats().subscribe({
-      next: (data) => {
-        console.log(data)
-        this.getStats(data)
-      }
-    })
-  }
-
-  getStats(data: any) {
-    this.userStats = data
-    this.progreso = Math.round((this.userStats.completed_tasks / this.userStats.total_tasks) * 100)
-    this.pendientes = Math.round((this.userStats.pending_tasks / this.userStats.total_tasks) * 100)
-    this.sinCompletar = Math.round((this.userStats.uncompleted_tasks / this.userStats.total_tasks) * 100)
-    this.updateChartData()
-  }
-
 
   updateChartData() {
 
@@ -111,10 +106,10 @@ export class StatsComponent {
       labels: this.chartLabels,
       datasets: [{
           label: 'Tareas',
-          data: [this.userStats.completed_tasks,
-          this.userStats.pending_tasks,
-          this.userStats.uncompleted_tasks,
-          this.userStats.total_tasks],
+          data: [this.stats.completed_tasks,
+          this.stats.pending_tasks,
+          this.stats.uncompleted_tasks,
+          this.stats.total_tasks],
           backgroundColor: [
             'rgba(68, 255, 0, 0.3)',
             'rgba(246, 185, 29, 0.3)',
@@ -128,4 +123,7 @@ export class StatsComponent {
     this.cdRef.detectChanges();
 
   }
+
+
 }
+

@@ -1,6 +1,7 @@
 <div class="flex min-w-screen min-h-screen h-screen">
-    <div class="flex flex-col w-3/12 h-screen border-r-2   px-10 py-7">
-        <img src="logo-name.svg" alt="" width="350" class="px-5 mt-4">
+    <div class="fixed md:static flex flex-col w-64 md:w-3/12 h-screen border-r-2 px-10 py-7 bg-white z-20 transition-all duration-300"
+         [ngClass]="{'hidden md:flex': !isSidebarOpen, 'flex': isSidebarOpen}">
+        <img src="logo-name.svg" alt=""  class="px-5 mt-4 w-full">
         <div class="flex-1 overflow-y-auto mt-20">
             <div class="principal flex flex-col gap-2 w-full">
                 <h5 class="text-xl font-medium text-stone-600 px-5">Principal</h5>
@@ -48,30 +49,48 @@
                 <p class="text-xl relative text-red-500">Cerrar sesión</p>
             </button>
         </div>
+        
+        <button 
+            (click)="toggleSidebar()"
+            class="absolute top-4 right-4 md:hidden p-2 rounded-full hover:bg-gray-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
     </div>
 
-    <div class="flex-1 h-full overflow-y-auto pt-10 w-9/10">
-        <div class="flex items-center h-header border-b-2 px-10 pb-10 shadow-lg ">
+    <div 
+        *ngIf="isSidebarOpen" 
+        (click)="toggleSidebar()"
+        class="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden">
+    </div>
+
+    <div class="flex-1 h-full overflow-y-auto pt-10 w-full">
+        <div class="flex items-center h-header border-b-2 px-10 pb-10 shadow-lg">
+            <div class="md:hidden">
+                <button 
+                  (click)="toggleSidebar()"
+                  class="flex items-center justify-center p-2 rounded-md text-primary-100 hover:bg-blue-100 focus:outline-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  <span class="sr-only">Abrir menu</span>
+                </button>
+            </div>
+            
             <div class="flex-1 flex justify-end items-center gap-5">
-                <p class="text-xl font-regular">Bienvenido, {{this.user.name}}!</p>
+                <p class="text-xl font-regular">Bienvenido, {{user.name}}!</p>
 
                 <div class="bg-primary-100 rounded-full w-[50px] h-[50px] flex justify-center items-center">
-                    <p class="text-3xl font-medium text-white">{{this.user.name.substr(0,1).toUpperCase()}}</p>
+                    <p class="text-3xl font-medium text-white">{{user.name.substr(0,1).toUpperCase()}}</p>
                 </div>
             </div>
         </div>
 
-
         <div class="h-content w-full bg-gradient-to-tr from-primary-100 to-primary-200 flex flex-col justify-center items-center">
             <div class="w-full h-full">
-
-                
                 <router-outlet></router-outlet>
             </div>
-            
         </div>
-
-        
     </div>
-
 </div>

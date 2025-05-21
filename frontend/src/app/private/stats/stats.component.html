@@ -1,49 +1,39 @@
-<div class="w-full relative p-10 h-full flex flex-col items-center  overflow-y-auto">
-    <div class="w-full h-full grid grid-cols-2 p-5 gap-10">
-        <div class="bg-white rounded-lg w-full h-full py-10 px-5 flex flex-col gap-10 justify-center items-center">
-            <h4 class="text-3xl font-medium text-stone-900">Estadísticas de tareas</h4>
-            <div class="w-3/4 h-3/4">
+<div class="w-full relative p-6 md:p-10 h-full flex flex-col items-center overflow-y-auto">
+    <div class="w-full h-auto md:h-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+        <div class="bg-white rounded-lg w-full h-auto md:h-full py-10 px-5 flex flex-col gap-10 justify-center items-center shadow">
+            <h4 class="text-2xl md:text-3xl font-medium text-stone-900 text-center">Estadísticas de tareas</h4>
 
-                <canvas baseChart [data]="chartData" [type]="chartType" [options]="chartOptions"></canvas>
+            <div class="w-full flex justify-center items-center h-64 md:h-3/4">
+                <div class="w-3/4">
+                    <canvas baseChart [data]="chartData" [type]="chartType" [options]="chartOptions"></canvas>
+                </div>
             </div>
         </div>
-        <div class="flex flex-col gap-5 w-full h-full">
-            <div class="bg-white w-full h-1/3 rounded-xl flex flex-col justify-center items-start p-6 shadow-md">
-                <h2 class="text-3xl font-medium text-stone-900 mb-5">Tareas completadas </h2>
 
-                <mat-progress-bar mode="determinate" [value]="progreso" color="primary"
-                    class="rounded-md"></mat-progress-bar>
-
-                <p class="text-2xl text-stone-700 mt-2 text-right">
+        <div class="flex flex-col gap-6 w-full h-auto md:h-full">
+            <div class="bg-white w-full rounded-xl flex flex-col justify-center items-start p-6 shadow-md h-auto md:h-1/3">
+                <h2 class="text-2xl md:text-3xl font-medium text-stone-900 mb-4">Tareas completadas</h2>
+                <mat-progress-bar mode="determinate" [value]="progreso" color="primary" class="rounded-md w-full"></mat-progress-bar>
+                <p class="text-xl md:text-2xl text-stone-700 mt-2 text-right w-full">
                     {{ progreso }}%
                 </p>
             </div>
-            <div class="bg-white w-full h-1/3 rounded-xl flex flex-col justify-center items-start p-6 shadow-md">
-                <h2 class="text-3xl font-medium text-stone-900 mb-5">Tareas pendientes </h2>
 
-                <mat-progress-bar mode="determinate" [value]="pendientes" color="danger"
-                    class="rounded-md"></mat-progress-bar>
-
-                <p class="text-2xl text-stone-700 mt-2 text-right">
+            <div class="bg-white w-full rounded-xl flex flex-col justify-center items-start p-6 shadow-md h-auto md:h-1/3">
+                <h2 class="text-2xl md:text-3xl font-medium text-stone-900 mb-4">Tareas pendientes</h2>
+                <mat-progress-bar mode="determinate" [value]="pendientes" color="warn" class="rounded-md w-full"></mat-progress-bar>
+                <p class="text-xl md:text-2xl text-stone-700 mt-2 text-right w-full">
                     {{ pendientes }}%
                 </p>
             </div>
-            <div class="bg-white w-full h-1/3 rounded-xl flex flex-col justify-center items-start p-6 shadow-md">
-                <h2 class="text-3xl font-medium text-stone-900 mb-5">Tareas incompletas </h2>
 
-                <mat-progress-bar mode="determinate" [value]="sinCompletar" color="danger"
-                    class="rounded-md"></mat-progress-bar>
-
-                <p class="text-2xl text-stone-700 mt-2 text-right">
+            <div class="bg-white w-full rounded-xl flex flex-col justify-center items-start p-6 shadow-md h-auto md:h-1/3">
+                <h2 class="text-2xl md:text-3xl font-medium text-stone-900 mb-4">Tareas incompletas</h2>
+                <mat-progress-bar mode="determinate" [value]="sinCompletar" color="warn" class="rounded-md w-full"></mat-progress-bar>
+                <p class="text-xl md:text-2xl text-stone-700 mt-2 text-right w-full">
                     {{ sinCompletar }}%
                 </p>
             </div>
-            
-
         </div>
-
     </div>
-
-
-
 </div>

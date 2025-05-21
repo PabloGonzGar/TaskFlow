@@ -8,13 +8,22 @@ import { AuthGuard } from './core/auth/auth.guard';
 import { TaskComponent } from './private/task/task.component';
 import { DashboardComponent } from './private/dashboard/dashboard.component';
 import { DashboardComponent as AdminComponent}   from './private/admin/dashboard/dashboard.component';
+import { UsuariosComponent } from './private/admin/usuarios/usuarios.component';
+import { EstadisticasComponent } from './private/admin/estadisticas/estadisticas.component';
+import { ConfiguracionComponent } from './private/admin/configuracion/configuracion.component';
 
 export const routes: Routes = [
     {path:  '', redirectTo:'landing', pathMatch: 'full'},
     {path: 'landing', component: LandingComponent},
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
-    {path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
+    {path: 'admin', component: AdminComponent, canActivate: [AuthGuard],
+        children: [
+            {path: '', component: EstadisticasComponent},
+            {path: 'usuarios', component: UsuariosComponent},
+            {path: 'configuracion', component: ConfiguracionComponent},
+        ]
+    },
     {path: 'dashboard', component: LayoutComponent, canActivate: [AuthGuard],
         children: [
             {path: '', component: DashboardComponent},

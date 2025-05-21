@@ -19,31 +19,6 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) { }
 
-  ngOnInit(): void {
-    if (this.authService.currentUser) {
-      let user = localStorage.getItem('currentUser')
-      if (user) {
-
-        //comprobar que el token sea válido
-
-        this.authService.refreshToken().subscribe({
-          next: () => {
-            console.log('exito')
-            console.log(this.authService.currentUser);
-          }
-          ,
-          error: (error) => {
-            console.log(error);
-            this.errorMessage = error.error.error
-          }
-        })
-
-
-        // JSON.parse(user).is_admin == true ? this.router.navigate(['/admin']) : this.router.navigate(['/dashboard'])
-      }
-
-    }
-  }
 
   login(): void {
     this.errorMessage = null

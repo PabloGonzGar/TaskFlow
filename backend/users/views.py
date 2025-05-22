@@ -97,7 +97,6 @@ def user_login(request):
     except Exception as e:  
         return JsonResponse({'error': f'Error al obtener los datos del formulario: {str(e)}'}, status=500)
 
-
     #Comprobar que el email y la password no esten vacios
     if email and password:
         #Validar el formato del email y la password 
@@ -105,9 +104,7 @@ def user_login(request):
             validate_email(email)
         except ValidationError as e:
             return JsonResponse({'error': f'Email no valido'}, status=400)
-        
-        
-        
+
         #Verificar si el usuario existe y la password es correcta
         if User.objects.filter(email=email).exists() and User.objects.get(email=email).check_password(password):
                 
@@ -315,7 +312,7 @@ def get_all_task_stats(request):
 
 
 #obtener todos los usuarios
-
+@csrf_exempt
 def get_all_users(request):
     if request.method != 'GET': 
         return JsonResponse({'error': 'El unico ,metodo permitido es GET'}, status=405)
@@ -354,7 +351,7 @@ def get_all_users(request):
     except Exception as e:
         return JsonResponse({'error': f'Ha ocurrido algun errror: {str(e)}'}, status=401)
     
-
+@csrf_exempt
 def delete_user(request, id):
     if request.method != 'DELETE':
         return JsonResponse({'error': 'El unico metodo permitido es DELETE'}, status=405)
@@ -375,7 +372,7 @@ def delete_user(request, id):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
 
         if user.is_superuser:
-            user_to_delete = User.objects.get(id=user_id)
+            user_to_delete = User.objects.get(id=id)
             user_to_delete.delete()
             return JsonResponse({'message': 'Usuario eliminado'}, status=200)
         else:

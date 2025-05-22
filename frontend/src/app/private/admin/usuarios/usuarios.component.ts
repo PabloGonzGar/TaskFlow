@@ -29,6 +29,13 @@ export class UsuariosComponent {
   }
 
   deleteUser(id: number) {
-    this.userSe
+    this.userService.deleteUser(id).subscribe({
+      next: (data) => {
+        console.log(data)
+      }
+    })
+    window.location.reload();
+
   }
+
 }

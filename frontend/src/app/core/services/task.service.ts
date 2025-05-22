@@ -26,6 +26,9 @@ export class TaskService {
     return this.http.put(this.api_url + 'completed/' + task +'/', {headers: this.getHeaders()})
   }
 
+  deleteTag(tag:any){
+    return this.http.delete(this.api_url+ 'admin/tags/delete/'+tag + '/', {headers:this.getHeaders()})
+  }
 
   getRecomendedTasks() {
     return this.http.get(this.api_url + 'recommendations/', {headers: this.getHeaders()})
@@ -45,6 +48,10 @@ export class TaskService {
 
   updateTask(task:any){
     return this.http.put(this.api_url + 'update/', task, {headers: this.getHeaders()})
+  }
+
+  updateTag(tag:any){
+    return this.http.put(this.api_url + 'admin/tags/update/', tag , {headers: this.getHeaders()})
   }
 
   deleteTask(task:any){

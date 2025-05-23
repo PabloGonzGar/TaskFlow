@@ -6,13 +6,12 @@ import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { CommonModule } from '@angular/common';
-import { CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 
 registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-task',
-  imports: [FormsModule, CommonModule, CdkDropList],
+  imports: [FormsModule, CommonModule],
   templateUrl: './task.component.html',
   styleUrls: ['./task.component.css'],
   providers: [{ provide: LOCALE_ID, useValue: 'es' }]
@@ -147,15 +146,5 @@ export class TaskComponent {
       }
     });
     window.location.reload();
-  }
-
-  drop(event: CdkDragDrop<any[]>) {
-    moveItemInArray(this.tasks, event.previousIndex, event.currentIndex);
-    this.updateTasksOrder();
-  }
-
-  updateTasksOrder() {
-    const otherTasks = this.tasks.filter(t => t.status=== 'pending');
-    this.tasks = [...otherTasks, ...this.pendingTasks];
   }
 }

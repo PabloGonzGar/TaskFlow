@@ -145,13 +145,12 @@
           <p class="text-black text-xl font-bold">Crear nueva tarea</p>
         </div>
 
-        <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" cdkDropList
-          [cdkDropListData]="pendingTasks" (cdkDropListDropped)="drop($event)">
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
           <div *ngFor="let task of pendingTasks" class="w-full w-card flex gap-5">
             <div
               class="user-select-none bg-white w-full relative rounded-lg p-10 flex flex-col h-fit shadow-2xl hover:cursor-grab"
-              cdkDrag draggable="true">
+               draggable="true">
               <div class="flex justify-between items-start">
                 <h1 class="text-2xl font-bold">{{ task.title.charAt(0).toUpperCase() + task.title.slice(1) }}</h1>
                 <div class="hover:text-primary-100 hover:cursor-pointer" (click)="activarModalUpdate(task)">

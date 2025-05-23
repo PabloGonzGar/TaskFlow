@@ -29,17 +29,18 @@
             </div>
         </div>
 
-        <div class="border-t-2 pt-5" (click)="this.activarConfigModal()">
+        <div class="border-t-2 pt-5" >
             <div
+                (click)="this.activarConfigModal()"
                 class="flex gap-3 items-center w-full rounded-md hover:bg-stone-300 hover:cursor-pointer px-5 py-2 hover:text-primary-100">
                 <img src="config-icon.svg" alt="" width="30">
                 <p class="text-xl relative text-stone-600">Configuracion</p>
             </div>
-            <a href=""
+            <div 
                 class="flex gap-3 items-center w-full rounded-md hover:bg-stone-300 hover:cursor-pointer px-5 py-2 hover:text-primary-100">
                 <img src="perfil-icon.svg" alt="" width="30">
                 <p class="text-xl relative text-stone-600">Perfil</p>
-            </a>
+        </div>
             <button class="flex gap-3 items-center w-full rounded-md hover:bg-red-100 hover:cursor-pointer px-5 py-2 "
                 (click)="logout()">
                 <img src="logout.svg" alt="" width="30">

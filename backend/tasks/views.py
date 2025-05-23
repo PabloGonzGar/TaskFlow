@@ -537,4 +537,3 @@ def update_tag(request):
         return JsonResponse(
             {"error": f"Error al validar el token: {str(e)}"}, status=401
         )
-

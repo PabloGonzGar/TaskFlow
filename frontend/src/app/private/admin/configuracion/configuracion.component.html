@@ -35,7 +35,7 @@
     </div>
 
     <table class="min-w-full divide-y divide-gray-200 shadow-md rounded-lg overflow-hidden bg-white">
-        <thead class="bg-gray-100">
+        <thead class="bg-stone-300">
             <tr>
                 <th class="px-6 py-3 text-left text-md font-semibold text-gray-700">Nombre</th>
                 <th class="px-6 py-3 text-left text-md font-semibold text-gray-700">Color</th>
@@ -43,7 +43,7 @@
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let categoria of tags">
+            <tr *ngFor="let categoria of tags" class="hover:bg-stone-100">
                 <td class="px-6 py-4 text-md text-gray-800">
                     {{ categoria.name }}
                 </td>

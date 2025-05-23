@@ -72,6 +72,8 @@ export class ConfiguracionComponent {
       }
     })
 
+    window.location.reload()
+
   }
 
   cancelar(){

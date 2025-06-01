@@ -160,7 +160,7 @@ DATABASES = {
     #     'PORT': '3306',
     # },
     'default': dj_database_url.config(
-        default=os.environ.get('postgresql://taskflow_o2xz_user:rktxwg8xC8kWsrifd8U5OLD8HCYCmWhW@dpg-d0uc1lm3jp1c73fqcqvg-a/taskflow_o2xz')
+        default='postgresql://taskflow_o2xz_user:rktxwg8xC8kWsrifd8U5OLD8HCYCmWhW@dpg-d0uc1lm3jp1c73fqcqvg-a/taskflow_o2xz'
     )
 }
 

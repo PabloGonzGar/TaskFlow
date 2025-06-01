@@ -152,16 +152,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'taskflow',
-        'USER': 'root',
-        'PASSWORD': 'pablo',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    },
-    'produccion': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'taskflow',
+    #     'USER': 'root',
+    #     'PASSWORD': 'pablo',
+    #     'HOST': 'localhost',
+    #     'PORT': '3306',
+    # },
+    'default': dj_database_url.config(
+        default=os.environ.get('postgresql://taskflow_o2xz_user:rktxwg8xC8kWsrifd8U5OLD8HCYCmWhW@dpg-d0uc1lm3jp1c73fqcqvg-a/taskflow_o2xz')
     )
 }
 

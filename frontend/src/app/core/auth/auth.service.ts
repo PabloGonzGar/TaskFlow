@@ -9,7 +9,7 @@ import { compileNgModule } from '@angular/compiler'
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api' 
+  private apiUrl = 'https://taskflow-4vbb.onrender.com/api' 
   private accessTokenKey = 'access_token' 
   private refreshTokenKey = 'refresh_token' 
   public currentUser = {

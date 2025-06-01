@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,7 +36,7 @@ SECRET_KEY = 'django-insecure-xb+g53050juk4#(#!c5n01w1l^d-aq00qeuoxch&z0@g($saoz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # settings.py
@@ -94,6 +97,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 # Configuración de CORS
@@ -155,7 +159,10 @@ DATABASES = {
         'PASSWORD': 'pablo',
         'HOST': 'localhost',
         'PORT': '3306',
-    }
+    },
+    'produccion': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 

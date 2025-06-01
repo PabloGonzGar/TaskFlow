@@ -132,9 +132,11 @@ export class TaskComponent {
   activarModalUpdate(task?: any) {
     this.modalUpdate = !this.modalUpdate;
     this.updateTask = task;
-
+    
+    
     console.log(this.updateTask);
     console.log(this.updateTask.end_date);
+    console.log(this.updateTask.tags[0]['id'])
   }
 
   actualizarTarea() {

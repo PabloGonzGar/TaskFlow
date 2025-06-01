@@ -93,14 +93,13 @@
             </span> </label>
           <input type="datetime-local" name="end_date"
             class="px-3 py-2 min-w-xl border-2 rounded-lg text-xl focus:outline-none focus:border-primary-100 w-full"
-            name="end_date" id="end_date" [(ngModel)]="this.updateTask.end_date">
+            name="end_date" id="end_date" [(ngModel)]="this.updateTask.end_date" [placeholder]="this.updateTask.end_date | date: 'dd/MM/yyyy HH:mm'">
         </div>
         <div class="flex flex-col w-3/4">
           <label for="categorias" class="block text-xl font-medium text-gray-700 w-full">Categorias</label>
           <select name="tag" id="categorias"
             class="border-2 rounded-lg text-xl focus:outline-none focus:border-primary-100 w-full py-2 px-3"
             [(ngModel)]="this.updateTask.tags">
-            <option value="" disabled selected>-</option>
             <option *ngFor="let tag of this.tags" name="categoria" [ngStyle]="{color: tag.color}" [value]="tag.id"
               class="text-xl font-medium">{{tag.name.charAt(0).toUpperCase() +
               tag.name.slice(1)}}</option>

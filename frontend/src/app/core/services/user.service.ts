@@ -10,7 +10,7 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
   
-    api_url = 'http://127.0.0.1:8000/api/users/'
+    api_url = 'https://taskflow-4vbb.onrender.com/api/users/'
   
     // para las peticiones, al haber auth, se debe agregar el token
   

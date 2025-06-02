@@ -102,6 +102,9 @@ MIDDLEWARE = [
 # Configuración de CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200", 
+    "https://task-flow-six-teal.vercel.app/",
+    "https://task-flow-pablos-projects-1cc27094.vercel.app/",
+    "https://task-flow-kti2iib6n-pablos-projects-1cc27094.vercel.app/"
 ]
 
 CORS_ALLOW_METHODS = [

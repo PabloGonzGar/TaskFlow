@@ -17,6 +17,6 @@ import { routes } from '../app.routes';
     TaskComponent,
     BrowserModule,
     RouterModule.forRoot(routes, { useHash: false })
-  ]
+  ],
 })
 export class AppModule { }

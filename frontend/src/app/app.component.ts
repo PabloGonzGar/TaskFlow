@@ -13,8 +13,4 @@ import { LoginComponent } from "./public/login/login.component";
 export class AppComponent {
   title = 'frontend';
 
-  constructor(private router: Router){}
-  ngOnInit(){
-    this.router.navigate(['/landing'])
-  }
 }

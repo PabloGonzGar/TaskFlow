@@ -55,10 +55,10 @@ export class AuthService {
         if(response && response.access_token && response.refresh_token){
           localStorage.setItem(this.accessTokenKey, response.access_token)
           localStorage.setItem(this.refreshTokenKey, response.refresh_token)
-          localStorage.setItem('currentUser', response.user)
           this.currentUser.id = response.user.id
           this.currentUser.email = response.user.email
           this.currentUser.name = response.user.name
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
           this.isLoggedInSubject.next(true)
         }
       }),

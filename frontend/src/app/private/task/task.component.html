@@ -93,7 +93,8 @@
             </span> </label>
           <input type="datetime-local" name="end_date"
             class="px-3 py-2 min-w-xl border-2 rounded-lg text-xl focus:outline-none focus:border-primary-100 w-full"
-            name="end_date" id="end_date" [(ngModel)]="this.updateTask.end_date" [placeholder]="this.updateTask.end_date | date: 'dd/MM/yyyy HH:mm'">
+            name="end_date" id="end_date" [(ngModel)]="this.updateTask.end_date"
+            [placeholder]="this.updateTask.end_date | date: 'dd/MM/yyyy HH:mm'">
         </div>
         <div class="flex flex-col w-3/4">
           <label for="categorias" class="block text-xl font-medium text-gray-700 w-full">Categorias</label>
@@ -130,29 +131,45 @@
   </div>
 
 
+
+  <!-- ------------------------------------------------TAREAS------------------------------------------------------------ -->
+
   <div class="w-full relative h-full flex flex-col items-center gap-10 overflow-y-auto">
 
     <div class="flex w-full">
       <div class=" w-full flex flex-col items-center justify-center p-10 gap-10">
 
-        <div
-          class="bg-white w-fit h-fit px-3 py-2 rounded-md hover:bg-stone-200 hover:cursor-pointer hover:shadow-2xl flex gap-5 justify-center items-center self-end"
-          (click)="activarModal()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
-            <path fill="#000" d="M298.7 213.3V0h-85.4v213.3H0v85.4h213.3V512h85.4V298.7H512v-85.4z" />
-          </svg>
-          <p class="text-black text-xl font-bold">Crear nueva tarea</p>
+        <div class=" w-full self-end flex justify-end gap-10 items-center">
+
+          <select name="filtrado" id=""
+            class="border-2 rounded-lg font-regular text-xl focus:outline-none focus:border-primary-100 w-1/4 py-2 px-3"
+            [(ngModel)]="this.filter">
+            <option value="pending" >Pendientes</option>
+            <option value="completed">Completadas</option>
+            <option value="uncompleted">Incompletas</option>
+          </select>
+
+          <div
+            class="bg-white w-fit h-fit px-3 py-2 rounded-md hover:bg-stone-200 hover:cursor-pointer hover:shadow-2xl flex gap-5 justify-center items-center "
+            (click)="activarModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
+              <path fill="#000" d="M298.7 213.3V0h-85.4v213.3H0v85.4h213.3V512h85.4V298.7H512v-85.4z" />
+            </svg>
+            <p class="text-black text-xl font-regular">Crear nueva tarea</p>
+          </div>
         </div>
 
         <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-          <div *ngFor="let task of pendingTasks" class="w-full w-card flex gap-5">
+          <div *ngFor="let task of tasks" class="w-full w-card flex gap-5">
             <div
               class="user-select-none bg-white w-full relative rounded-lg p-10 flex flex-col h-fit shadow-2xl hover:cursor-grab"
-               draggable="true">
-              <div class="flex justify-between items-start">
+              *ngIf="task.status == this.filter">
+
+              <div class="flex justify-between items-start relative">
                 <h1 class="text-2xl font-bold">{{ task.title.charAt(0).toUpperCase() + task.title.slice(1) }}</h1>
-                <div class="hover:text-primary-100 hover:cursor-pointer" (click)="activarModalUpdate(task)">
+
+                <div class="hover:text-primary-100 hover:cursor-pointer" (click)="activarModalUpdate(task)" *ngIf="task.status == 'pending'">
                   <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24">
                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                       stroke-width="2">
@@ -162,6 +179,16 @@
                   </svg>
                 </div>
               </div>
+              <h4 class="text-xl font-bold" [ngClass]="{
+                      'text-green-500': task.status === 'completed',
+                      'text-yellow-500': task.status === 'pending',
+                      'text-red-500': task.status === 'uncompleted'
+                    }">{{
+                task.status === 'completed' ? 'Completada' :
+                task.status === 'pending' ? 'Pendiente' :
+                task.status === 'uncompleted' ? 'Incompleta' :
+                'Desconocido'
+                }}</h4>
               <p class="text-xl font-medium text-stone-400 break-words">
                 {{ task.end_date | date: 'dd/MM/yyyy HH:mm' }}
               </p>
@@ -175,7 +202,7 @@
                   </p>
                 </div>
               </div>
-              <div class="flex justify-center items-center gap-5 absolute bottom-5 left-10">
+              <div class="flex justify-center items-center gap-5 absolute bottom-5 left-10" *ngIf="task.status=='pending'">
                 <button
                   class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 hover:shadow-md hover:shadow-stone-600"
                   (click)="completeTask(task.id)">

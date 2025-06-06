@@ -39,12 +39,14 @@ export class TaskComponent {
     id: ''
   };
 
+
+  filter:string = 'pending'
+
   due_date = new Date();
   public tags: any = [];
   public tasks: any[] = [];
 
   constructor(private taskService: TaskService, private authService: AuthService) {}
-  pendingTasks:any[] = []
 
   ngOnInit(): void {
     this.taskService.getAllTags().subscribe({
@@ -58,14 +60,11 @@ export class TaskComponent {
       next: (data) => {
         console.log(data);
         this.getTasks(data);
-        this.filterPendingTasks();
       }
     });
   }
 
-  filterPendingTasks() {
-    this.pendingTasks = this.tasks.filter(task => task.status === 'pending');
-  }
+ 
 
   completeTask(id: string) {
     this.taskService.setCompleteTask(id).subscribe({

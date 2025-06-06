@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
-import { NgClass, NgFor } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { _parseObjectDataRadialScale } from 'chart.js/helpers';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [NgFor, NgClass],
+  imports: [NgFor, NgClass, NgIf],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.css'
 })

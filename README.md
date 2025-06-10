@@ -1,51 +1,142 @@
-<h1 align="center">📌 TaskFlow</h1>
+# Documentación TaskFlow Automate
 
-<p align="center">
-  <b>Tu gestor de tareas inteligente y elegante</b><br>
-  Trabajo de Fin de Grado — Pablo Segundo González García <br>
-  IES Martínez Montañés <br>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/status-en%20produccion-green?style=flat-square" />
-  <img src="https://img.shields.io/badge/angular-red?logo=angular&style=flat-square" />
-  <img src="https://img.shields.io/badge/django-blue?logo=django&style=flat-square" />
-  <img src="https://img.shields.io/badge/tailwindCSS-white?logo=tailwindcss&style=flat-square" />
-</p>
+Proyecto final del ciclo formativo de Desarrollo de Aplicaciones Web (DAW) — IES Martínez Montañés
+<br> Pablo Segundo González García
 
 ---
 
-## Descripción
+## Índice
 
-**TaskFlow** es una aplicación web de gestión de tareas desarrollada como TFG. Su propósito es mejorar la productividad personal mediante una interfaz moderna, minimalista y fácil de usar. Permite:
-
-- ✅ Crear y editar tareas fácilmente
-- 🗂️ Usar etiquetas personalizadas para organizarlas
-- 📆 Visualización en un solo panel
-
----
-
-## Capturas de pantalla
-![image](https://github.com/user-attachments/assets/c5132554-73cf-40ba-8f71-69a5486cd9b9)
-![image](https://github.com/user-attachments/assets/5badfaa9-06fe-40f4-9f03-54b549382e63)
-![image](https://github.com/user-attachments/assets/6af4c2ef-e23c-4a89-87f3-93ac6ae8197a)
-![image](https://github.com/user-attachments/assets/20289dd7-de25-4305-b8cb-7dc73af102ed)
-![image](https://github.com/user-attachments/assets/ceab6982-b92c-4944-870b-eedb45e3e53d)
-![image](https://github.com/user-attachments/assets/5d02451d-d5c2-464b-8f39-2486bf199394)
-![image](https://github.com/user-attachments/assets/2a7f738e-679d-4b42-8b02-62eb31b63d3e)
-![image](https://github.com/user-attachments/assets/608afa94-d279-4672-bb91-61c644a8bf81)
-
+1. [Introducción](#1-introducción)
+2. [Análisis de Requisitos](#2-análisis-de-requisitos)
+3. [Diseño del Sistema](#3-diseño-del-sistema)
+4. [Desarrollo](#4-desarrollo)
+5. [Anexos](#5-anexos)
 
 ---
 
-## Tecnologías
+## 1. Introducción
 
-| Categoría    | Tecnologías |
-|-------------|-------------|
-| **Frontend** | Angular, TypeScript, Tailwind CSS |
-| **Backend**  | Django, Django RestFramework, Python |
-| **Base de datos** | SQL |
-| **Despliegue** | Render + Vercel | 
+TaskFlow es una aplicación web desarrollada como proyecto de fin de grado. Tiene como objetivo la gestión de tareas tanto a nivel personal como laboral, ofreciendo funciones inteligentes de recomendación y paneles de administración.
+
+Se divide en tres módulos principales para el usuario:
+
+* **Dashboard / Recomendaciones**: muestra las 4 tareas más prioritarias mediante IA (API de Google Gemini 2.0 Flash).
+* **Tareas**: permite gestionar las tareas (crear, editar, eliminar, completar).
+* **Estadísticas**: ofrece una visualización gráfica de tareas (completadas, pendientes, incompletas).
+
+Para administradores:
+
+* **Dashboard**: resumen de tareas de todos los usuarios.
+* **Usuarios**: listado y eliminación de usuarios.
+* **Configuración**: gestión de categorías de tareas.
 
 ---
 
+## 2. Análisis de Requisitos
+
+### Requisitos Funcionales
+
+**Usuarios:**
+
+* CRUD de tareas
+* Recomendaciones por IA
+* Estadísticas personalizadas
+* Personalización visual de la interfaz
+
+**Administradores:**
+
+* Gestión de usuarios
+* Estadísticas globales
+* CRUD de categorías
+
+### Requisitos No Funcionales
+
+* Seguridad en el acceso
+* Interfaz intuitiva
+* Navegación clara con indicación de ubicación
+
+---
+
+## 3. Diseño del Sistema
+
+### Arquitectura
+
+Modelo cliente-servidor desacoplado (SPA):
+
+* **Cliente:** Angular 19 desplegado en Vercel
+* **Servidor:** Django + Django Rest Framework con autenticación JWT, desplegado en Render
+
+### Tecnologías
+
+* **Frontend:** Angular 19, Tailwind CSS v3
+* **Backend:** Django + DRF, Simple JWT, API Gemini 2.0 Flash
+* **Base de Datos:** MySQL (desarrollo), PostgreSQL (producción vía Render)
+
+---
+
+## 4. Desarrollo
+
+### Integraciones
+
+* **Google Generative AI**: para priorización de tareas vía IA
+* **Django Rest Framework**: creación de la API REST
+* **ng2-charts**: representación gráfica de estadísticas
+
+### Personalización de interfaz
+
+* Cambios de tema guardados en Local Storage
+
+### Despliegue
+
+* **Frontend:** Vercel (auto despliegue vía GitHub)
+* **Backend y BD:** Render (PostgreSQL, servicios web)
+
+---
+
+## 5. Anexos
+
+### Modelos de Base de Datos (Django ORM)
+
+```python
+class User(AbstractBaseUser, PermissionsMixin):
+    ROL_CHOICES = (
+        ('admin', 'Admin'),
+        ('user', 'User'),
+    )
+
+    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=200)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELD = 'name'   
+
+    def __str__(self):
+        return self.name
+
+class Task(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    status = models.CharField(max_length=50)
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+```
+
+### Diseño de base de datos
+
+Realizado en Draw\.io, implementado mediante migraciones desde modelos en Django ORM.
+
+![image](https://github.com/user-attachments/assets/64158226-b613-48f3-9eb6-98c7341cebe8)
+
+---
+
+**IES Martínez Montañés – Desarrollo de Aplicaciones Web – Pablo Segundo González García**
